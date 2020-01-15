@@ -273,6 +273,9 @@ void a3demo_render_main(const a3_DemoState *demoState,
 	// current scene object being rendered, for convenience
 	const a3_DemoSceneObject *currentSceneObject, *endSceneObject;
 
+	// ****TO-DO: 
+	//	-> 5a. list drawables for scene objects
+	/*
 	// temp drawable pointers
 	const a3_VertexDrawable *drawable[] = {
 		demoState->draw_plane,
@@ -281,6 +284,7 @@ void a3demo_render_main(const a3_DemoState *demoState,
 		demoState->draw_torus,
 		demoState->draw_teapot,
 	};
+	*/
 
 
 	//-------------------------------------------------------------------------
@@ -294,6 +298,9 @@ void a3demo_render_main(const a3_DemoState *demoState,
 	// target back buffer
 	a3framebufferDeactivateSetViewport(a3fbo_depth24, -demoState->frameBorder, -demoState->frameBorder, demoState->frameWidth, demoState->frameHeight);
 
+	// ****TO-DO: 
+	//	-> 5b. render skybox or clear buffers
+	/*
 	// skybox or regular clear
 	glDisable(GL_BLEND);
 	if (demoState->displaySkybox)
@@ -323,8 +330,12 @@ void a3demo_render_main(const a3_DemoState *demoState,
 		//	skybox will draw over everything otherwise
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
+	*/
 
 
+	// ****TO-DO: 
+	//	-> 5c. render grid
+	/*
 	// draw grid aligned to world
 	if (demoState->displayGrid)
 	{
@@ -337,6 +348,7 @@ void a3demo_render_main(const a3_DemoState *demoState,
 		a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uColor, 1, demoState->gridColor.v);
 		a3vertexDrawableActivateAndRender(currentDrawable);
 	}
+	*/
 
 
 	// support multiple geometry passes
@@ -347,6 +359,9 @@ void a3demo_render_main(const a3_DemoState *demoState,
 		{
 			// forward pass
 		case 0: {
+			// ****TO-DO: 
+			//	-> 5d. render objects
+			/*
 			// select program based on settings
 			currentDemoProgram = demoState->prog_drawColorUnif;
 			a3shaderProgramActivate(currentDemoProgram->program);
@@ -378,6 +393,7 @@ void a3demo_render_main(const a3_DemoState *demoState,
 				currentDrawable = drawable[k];
 				a3vertexDrawableActivateAndRender(currentDrawable);
 			}
+			*/
 		}	break;
 			// end geometry pass
 		}
@@ -400,6 +416,9 @@ void a3demo_render_main(const a3_DemoState *demoState,
 	}
 
 
+	// ****TO-DO: 
+	//	-> 5e. render coordinate axes
+	/*
 	// superimpose axes
 	// draw coordinate axes in front of everything
 	currentDemoProgram = demoState->prog_drawColorAttrib;
@@ -430,6 +449,7 @@ void a3demo_render_main(const a3_DemoState *demoState,
 			a3vertexDrawableRenderActive();
 		}
 	}
+	*/
 
 
 	// pipeline
@@ -437,6 +457,13 @@ void a3demo_render_main(const a3_DemoState *demoState,
 	{
 
 	}
+
+	// ****TO-DO: optionally comment these out
+	modelViewProjectionMat = a3mat4_identity;
+	currentDemoProgram = 0;
+	currentSceneObject = endSceneObject = 0;
+	currentDrawable = 0;
+	i = j = k = 0;
 }
 
 
