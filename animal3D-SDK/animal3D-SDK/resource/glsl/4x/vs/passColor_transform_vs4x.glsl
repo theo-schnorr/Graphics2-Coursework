@@ -30,7 +30,7 @@
 //	5) assign vertex color input to varying
 
 layout (location = 0) in vec4 aPosition;
-uniform vec4 uMVP; //declaring uniform vector
+uniform mat4 uMVP; //declaring uniform vector
 layout (location = 3) in vec4 colorInp;
 out vec4 vertColor; //declaring color input to fs
 
@@ -39,5 +39,5 @@ void main()
 {
 	vertColor = colorInp;
 
-	gl_Position = aPosition * uMVP;
+	gl_Position = uMVP *aPosition;
 }

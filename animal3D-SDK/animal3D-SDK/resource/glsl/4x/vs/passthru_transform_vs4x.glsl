@@ -26,9 +26,9 @@
 
 
 layout (location = 0) in vec4 aPosition;
-uniform vec4 uMVP; //declaring the uniform vector
+uniform mat4 uMVP; //declaring the uniform vector
 
 void main()
 {
-	gl_Position = aPosition * uMVP; //getting the updated position
+	gl_Position = uMVP * aPosition ; //getting the updated position
 }
