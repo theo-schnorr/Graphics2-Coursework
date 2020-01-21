@@ -76,12 +76,30 @@ inline void a3demoCB_keyCharPress_main(a3_DemoState *demoState, a3i32 asciiKey,
 		break;
 
 		// toggle active camera
-//	case 'v':
-//		demoState->activeCamera = (demoState->activeCamera + 1) % demoStateMaxCount_cameraObject;
-//		break;
-//	case 'c':
-//		demoState->activeCamera = (demoState->activeCamera - 1 + demoStateMaxCount_cameraObject) % demoStateMaxCount_cameraObject;
-//		break;
+	case 'v':
+		demoState->activeCamera = (demoState->activeCamera + 1) % demoStateMaxCount_cameraObject;
+		break;
+	case 'c':
+		demoState->activeCamera = (demoState->activeCamera - 1 + demoStateMaxCount_cameraObject) % demoStateMaxCount_cameraObject;
+		break;
+
+		// decrease light count
+	case 'l':
+		if (demoState->lightingPipelineMode == demoStatePipelineMode_forward)
+		{
+			if(demoState->forwardLightCount > 0)
+				--demoState->forwardLightCount;
+		}
+		break;
+
+		// increase light count
+	case 'L':
+		if (demoState->lightingPipelineMode == demoStatePipelineMode_forward)
+		{
+			if (demoState->forwardLightCount < demoStateMaxCount_lightObject)
+				++demoState->forwardLightCount;
+		}
+		break;
 
 		// toggle skybox
 	case 'b':
@@ -96,6 +114,14 @@ inline void a3demoCB_keyCharPress_main(a3_DemoState *demoState, a3i32 asciiKey,
 		// toggle pipeline overlay
 	case 'o':
 		demoState->displayPipeline = 1 - demoState->displayPipeline;
+		break;
+
+		// toggle forward shading mode
+	case 'j':
+		demoState->forwardShadingMode = (demoState->forwardShadingMode + demoState->forwardShadingModeCount - 1) % demoState->forwardShadingModeCount;
+		break;
+	case 'k':
+		demoState->forwardShadingMode = (demoState->forwardShadingMode + 1) % demoState->forwardShadingModeCount;
 		break;
 	}
 }
@@ -222,6 +248,9 @@ A3DYLIBSYMBOL a3_DemoState *a3demoCB_load(a3_DemoState *demoState, a3boolean hot
 		// shaders
 		a3demo_loadShaders(demoState);
 
+		// textures
+		a3demo_loadTextures(demoState);
+
 		// scene objects
 		a3demo_initScene(demoState);
 	}
@@ -250,6 +279,7 @@ A3DYLIBSYMBOL a3_DemoState *a3demoCB_unload(a3_DemoState *demoState, a3boolean h
 		// free graphics objects
 		a3demo_unloadGeometry(demoState);
 		a3demo_unloadShaders(demoState);
+		a3demo_unloadTextures(demoState);
 
 		// validate unload
 		a3demo_validateUnload(demoState);
@@ -333,7 +363,7 @@ A3DYLIBSYMBOL void a3demoCB_windowMove(a3_DemoState *demoState, a3i32 newWindowP
 A3DYLIBSYMBOL void a3demoCB_windowResize(a3_DemoState *demoState, a3i32 newWindowWidth, a3i32 newWindowHeight)
 {
 	a3ui32 i;
-	a3_DemoCamera *camera;
+	a3_DemoProjector *camera;
 
 	// account for borders here
 	const a3i32 frameBorder = 0;
@@ -364,10 +394,10 @@ A3DYLIBSYMBOL void a3demoCB_windowResize(a3_DemoState *demoState, a3i32 newWindo
 
 	// viewing info for projection matrix
 	// initialize cameras dependent on viewport
-	for (i = 0, camera = demoState->camera + i; i < demoStateMaxCount_cameraObject; ++i, ++camera)
+	for (i = 0, camera = demoState->projector + i; i < demoStateMaxCount_cameraObject; ++i, ++camera)
 	{
 		camera->aspect = frameAspect;
-		a3demo_updateCameraProjection(camera);
+		a3demo_updateProjectorProjectionMat(camera);
 	}
 }
 
@@ -546,7 +576,7 @@ A3DYLIBSYMBOL void a3demoCB_mouseRelease(a3_DemoState *demoState, a3i32 button, 
 A3DYLIBSYMBOL void a3demoCB_mouseWheel(a3_DemoState *demoState, a3i32 delta, a3i32 cursorX, a3i32 cursorY)
 {
 	// controlled camera when zooming
-	a3_DemoCamera *camera;
+	a3_DemoProjector* activeCamera;
 
 	// persistent state update
 	a3mouseSetStateWheel(demoState->mouse, (a3_MouseWheelState)delta);
@@ -558,10 +588,10 @@ A3DYLIBSYMBOL void a3demoCB_mouseWheel(a3_DemoState *demoState, a3i32 delta, a3i
 	case demoStateMode_main:
 		// can use this to change zoom
 		// zoom should be faster farther away
-		camera = demoState->camera + demoState->activeCamera;
-		camera->fovy -= camera->ctrlZoomSpeed * (camera->fovy / a3real_oneeighty) * (a3f32)delta;
-		camera->fovy = a3clamp(camera->ctrlZoomSpeed, a3real_oneeighty - camera->ctrlZoomSpeed, camera->fovy);
-		a3demo_updateCameraProjection(camera);
+		activeCamera = demoState->projector + demoState->activeCamera;
+		activeCamera->fovy -= activeCamera->ctrlZoomSpeed * (activeCamera->fovy / a3real_oneeighty) * (a3f32)delta;
+		activeCamera->fovy = a3clamp(activeCamera->ctrlZoomSpeed, a3real_oneeighty - activeCamera->ctrlZoomSpeed, activeCamera->fovy);
+		a3demo_updateProjectorProjectionMat(activeCamera);
 		break;
 	}
 }
