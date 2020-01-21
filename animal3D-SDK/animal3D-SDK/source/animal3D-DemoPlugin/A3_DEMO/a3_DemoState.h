@@ -64,13 +64,18 @@ extern "C"
 	{
 		demoStateMaxCount_sceneObject = 8,
 		demoStateMaxCount_cameraObject = 1,
+		demoStateMaxCount_lightObject = 4,
 		demoStateMaxCount_projector = 1,
 
 		demoStateMaxCount_timer = 1,
+
 		demoStateMaxCount_drawDataBuffer = 1,
-		demoStateMaxCount_vertexArray = 4,
+		demoStateMaxCount_vertexArray = 8,
 		demoStateMaxCount_drawable = 16,
-		demoStateMaxCount_shaderProgram = 8,
+		
+		demoStateMaxCount_shaderProgram = 16,
+		
+		demoStateMaxCount_texture = 16,
 	};
 
 	// additional counters for demo modes
@@ -85,6 +90,25 @@ extern "C"
 	enum a3_DemoStateModeNames
 	{
 		demoStateMode_main,
+	};
+
+
+//-----------------------------------------------------------------------------
+
+	// pipeline modes
+	enum a3_DemoStatePipelineModeNames
+	{
+		demoStatePipelineMode_forward,
+	};
+
+	// forward shading modes
+	enum a3_DemoStateForwardShadingModeNames
+	{
+		demoStateForwardShadingMode_solid,
+		demoStateForwardShadingMode_texture,
+		demoStateForwardShadingMode_Lambert,
+		demoStateForwardShadingMode_Phong,
+		demoStateForwardShadingMode_nonphoto,
 	};
 
 	
@@ -151,6 +175,12 @@ extern "C"
 		// cameras
 		a3ui32 activeCamera;
 
+		// lights
+		a3ui32 lightingPipelineMode;
+		a3ui32 forwardShadingMode, forwardShadingModeCount;
+		a3ui32 forwardLightCount;
+		a3_DemoPointLight forwardPointLight[demoStateMaxCount_lightObject];
+
 
 		//---------------------------------------------------------------------
 		// object arrays: organized as anonymous unions for two reasons: 
@@ -179,13 +209,20 @@ extern "C"
 					mainCameraObject[1];
 			};
 		};
-
-		// cameras
-		//	- any object can have a camera "component"
 		union {
-			a3_DemoCamera camera[demoStateMaxCount_projector];
+			a3_DemoSceneObject lighObject[demoStateMaxCount_lightObject];
 			struct {
-				a3_DemoCamera
+				a3_DemoSceneObject
+					mainLightObject[1];
+			};
+		};
+
+		// projectors/cameras
+		//	- any object can have a projector "component" to make it a viewer
+		union {
+			a3_DemoProjector projector[demoStateMaxCount_projector];
+			struct {
+				a3_DemoProjector
 					sceneCamera[1];						// scene viewing cameras
 			};
 		};
@@ -201,9 +238,6 @@ extern "C"
 		};
 
 
-		// ****TO-DO: 
-		//	-> 2a. vertex buffers union
-		/*
 		// draw data buffers
 		union {
 			a3_VertexBuffer drawDataBuffer[demoStateMaxCount_drawDataBuffer];
@@ -212,26 +246,19 @@ extern "C"
 					vbo_staticSceneObjectDrawBuffer[1];			// buffer to hold all data for static scene objects (e.g. grid)
 			};
 		};
-		*/
 
-		// ****TO-DO: 
-		//	-> 3a. vertex arrays union
-		/*
 		// vertex array objects
 		union {
 			a3_VertexArrayDescriptor vertexArray[demoStateMaxCount_vertexArray];
 			struct {
 				a3_VertexArrayDescriptor
+					vao_position_texcoord_normal[1],			// VAO for vertex format with position, texture coordinates and normal
 					vao_position_texcoord[1],					// VAO for vertex format with position and texture coordinates
 					vao_position_color[1],						// VAO for vertex format with position and color
 					vao_position[1];							// VAO for vertex format with only position
 			};
 		};
-		*/
 
-		// ****TO-DO: 
-		//	-> 3b. drawables union
-		/*
 		// drawables
 		union {
 			a3_VertexDrawable drawable[demoStateMaxCount_drawable];
@@ -243,6 +270,8 @@ extern "C"
 					draw_skybox[1],								// skybox cube mesh
 					draw_unitquad[1];							// unit quad (used for fsq)
 				a3_VertexDrawable
+					draw_pointlight[1];							// volume for point light (low-res sphere)
+				a3_VertexDrawable
 					draw_plane[1],								// procedural plane
 					draw_sphere[1],								// procedural sphere
 					draw_cylinder[1],							// procedural cylinder
@@ -250,24 +279,47 @@ extern "C"
 					draw_teapot[1];								// can't not have a Utah teapot
 			};
 		};
-		*/
 
 
-		// ****TO-DO: 
-		//	-> 4a. shader programs union
-		/*
 		// shader programs and uniforms
 		union {
 			a3_DemoStateShaderProgram shaderProgram[demoStateMaxCount_shaderProgram];
 			struct {
 				a3_DemoStateShaderProgram
-					prog_drawColorUnif[1],						// draw uniform color
-					prog_drawColorAttrib[1],					// draw color attribute
+					prog_drawColorAttrib_instanced[1],			// draw color attribute with instancing
 					prog_drawColorUnif_instanced[1],			// draw uniform color with instancing
-					prog_drawColorAttrib_instanced[1];			// draw color attribute with instancing
+					prog_drawColorAttrib[1],					// draw color attribute
+					prog_drawColorUnif[1];						// draw uniform color
+				// ****TO-DO: 
+				//	-> 2.1a: new program declarations
+				/*
+				a3_DemoStateShaderProgram
+					prog_drawNonphoto_multi[1],					// draw non-photorealistic shading model, multiple lights
+					prog_drawPhong_multi[1],					// draw Phong shading model, multiple lights
+					prog_drawLambert_multi[1],					// draw Lambert shading model, multiple lights
+					prog_drawTexture[1];						// draw texture
+				*/
 			};
 		};
-		*/
+
+
+		// textures
+		union {
+			a3_Texture texture[demoStateMaxCount_texture];
+			struct {
+				a3_Texture
+					tex_skybox_clouds[1],
+					tex_skybox_water[1],
+					tex_earth_dm[1],
+					tex_earth_sm[1],
+					tex_mars_dm[1],
+					tex_mars_sm[1],
+					tex_stone_dm[1],
+					tex_ramp_dm[1],
+					tex_ramp_sm[1],
+					tex_checker[1];
+			};
+		};
 
 
 		// managed objects, no touchie
@@ -283,24 +335,26 @@ extern "C"
 	// demo-related functions
 
 	// idle loop
-	void a3demo_input(a3_DemoState *demoState, a3f64 dt);
-	void a3demo_update(a3_DemoState *demoState, a3f64 dt);
-	void a3demo_render(const a3_DemoState *demoState);
+	void a3demo_input(a3_DemoState* demoState, a3f64 dt);
+	void a3demo_update(a3_DemoState* demoState, a3f64 dt);
+	void a3demo_render(a3_DemoState const* demoState);
 
 	// loading
-	void a3demo_loadGeometry(a3_DemoState *demoState);
-	void a3demo_loadShaders(a3_DemoState *demoState);
-	void a3demo_refresh(a3_DemoState *demoState);
+	void a3demo_loadGeometry(a3_DemoState* demoState);
+	void a3demo_loadShaders(a3_DemoState* demoState);
+	void a3demo_loadTextures(a3_DemoState* demoState);
+	void a3demo_refresh(a3_DemoState* demoState);
 
 	// unloading
-	void a3demo_unloadGeometry(a3_DemoState *demoState);
-	void a3demo_unloadShaders(a3_DemoState *demoState);
-	void a3demo_validateUnload(const a3_DemoState *demoState);
+	void a3demo_unloadGeometry(a3_DemoState* demoState);
+	void a3demo_unloadShaders(a3_DemoState* demoState);
+	void a3demo_unloadTextures(a3_DemoState* demoState);
+	void a3demo_validateUnload(a3_DemoState const* demoState);
 
 	// other utils & setup
 	void a3demo_setDefaultGraphicsState();
-	void a3demo_initScene(a3_DemoState *demoState);
-	void a3demo_initSceneRefresh(a3_DemoState *demoState);
+	void a3demo_initScene(a3_DemoState* demoState);
+	void a3demo_initSceneRefresh(a3_DemoState* demoState);
 
 
 //-----------------------------------------------------------------------------
