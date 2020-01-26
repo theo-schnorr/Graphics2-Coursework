@@ -35,7 +35,7 @@ in vec4 oMVNormie;
 in vec4 oVSPos; 
 in vec4 oTexCoord;
 
-uniform Sampler2D uTex_dm;
+uniform sampler2D uTex_dm;
 uniform int uLightCt;
 uniform float uLightSz;
 uniform float uLightSzInvSq;
@@ -47,7 +47,16 @@ out vec4 rtFragColor;
 
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE RED
-	rtFragColor = vec4(oMVNormie, 1.0);
+	rtFragColor = LambertReflection(oMVNormie, uLightPos, uLightCol) * texture(uTex_dm, oTexCoord.xy);
+	//rtFragColor = uLightCol;
+	//rtFragColor = oTexCoord;
+	//rtFragColor = oVSPos;
+	//rtFragColor = oMVNormie;
 }
 
+vec4 LambertReflection(vec4 n, vec4 l, vec4 color)
+{
+	float dotPro = dot(n, l);
+	
+	return dotPro * color;
+}

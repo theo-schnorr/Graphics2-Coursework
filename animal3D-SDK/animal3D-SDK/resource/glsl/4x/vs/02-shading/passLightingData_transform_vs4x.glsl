@@ -54,7 +54,7 @@ out vec4 oTexCoord;
 void main()
 {
 	oVSPos = uMV * aPosition;
-	oVSNormie = uMV_nrm * aNormal; 
+	oMVNormie = uMV_nrm * aNormal; 
 	oTexCoord = uAtlas * aTexCoord;
 	
 	gl_Position = uP* uMV * aPosition;
