@@ -39,7 +39,7 @@
 // initialize non-asset objects
 void a3demo_initScene(a3_DemoState *demoState)
 {
-	a3ui32 i;
+	a3ui32 i, j;
 	a3_DemoProjector* camera;
 	a3_DemoPointLight* pointLight;
 
@@ -102,13 +102,26 @@ void a3demo_initScene(a3_DemoState *demoState)
 	demoState->demoModeCount = 1;
 	demoState->demoMode = 0;
 
-	// demo mode A: deferred + bloom
-	//	 1) scene
+	// demo mode A: forward lighting demo
+	//	1) shading
 	//		a) color buffer
-	for (i = 0; i < demoStateMaxSubModes; ++i)
-		demoState->demoOutputCount[0][i] = 1;
-	demoState->demoSubModeCount[0] = demoStateMaxSubModes;
-	demoState->demoOutputCount[0][0] = demoStateMaxOutputModes;
+	//	2) shading with MRT
+	//		a) color target 0: composite color
+	//		b) color target 1: position attribute
+	//		c) color target 2: normal attribute
+	//		d) color target 3: texcoord attribute
+	//		e) color target 4: diffuse texture sample
+	//		f) color target 5: specular texture sample
+	//		g) color target 6: diffuse shading
+	//		h) color target 7: specular shading
+	//		i) depth buffer
+	for (i = 0; i < demoStateMaxModes; ++i)
+		for (j = 0, demoState->demoSubModeCount[i] = 1;
+			j < demoStateMaxSubModes;
+			++j)
+			demoState->demoOutputCount[i][j] = 1;
+	demoState->demoSubModeCount[demoStateMode_main] = demoStateMaxSubModes;
+	demoState->demoOutputCount[demoStateMode_main][demoStateSubMode_main_mrt] = demoStateMaxOutputModes;
 
 
 	// initialize other objects and settings
@@ -120,12 +133,17 @@ void a3demo_initScene(a3_DemoState *demoState)
 	demoState->displayHiddenVolumes = 1;
 	demoState->displayPipeline = 0;
 	demoState->updateAnimation = 1;
+	demoState->stencilTest = 0;
 
 
 	// shading mode
 	demoState->lightingPipelineMode = demoStatePipelineMode_forward;
 	demoState->forwardShadingMode = demoStateForwardShadingMode_solid;
-	demoState->forwardShadingModeCount = 5;
+	demoState->forwardShadingModeCount = demoStateForwardShadingModeMax;
+
+	// display mode
+	demoState->forwardDisplayMode = demoStateForwardDisplayMode_texture;
+	demoState->forwardDisplayModeCount = demoStateForwardDisplayModeMax;
 
 
 	// lights

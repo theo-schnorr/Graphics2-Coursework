@@ -116,12 +116,25 @@ inline void a3demoCB_keyCharPress_main(a3_DemoState *demoState, a3i32 asciiKey,
 		demoState->displayPipeline = 1 - demoState->displayPipeline;
 		break;
 
+		// toggle stencil test
+	case 'i':
+		demoState->stencilTest = 1 - demoState->stencilTest;
+		break;
+
 		// toggle forward shading mode
 	case 'j':
 		demoState->forwardShadingMode = (demoState->forwardShadingMode + demoState->forwardShadingModeCount - 1) % demoState->forwardShadingModeCount;
 		break;
 	case 'k':
 		demoState->forwardShadingMode = (demoState->forwardShadingMode + 1) % demoState->forwardShadingModeCount;
+		break;
+
+		// toggle forward display mode
+	case 'J':
+		demoState->forwardDisplayMode = (demoState->forwardDisplayMode + demoState->forwardDisplayModeCount - 1) % demoState->forwardDisplayModeCount;
+		break;
+	case 'K':
+		demoState->forwardDisplayMode = (demoState->forwardDisplayMode + 1) % demoState->forwardDisplayModeCount;
 		break;
 	}
 }
@@ -280,6 +293,7 @@ A3DYLIBSYMBOL a3_DemoState *a3demoCB_unload(a3_DemoState *demoState, a3boolean h
 		a3demo_unloadGeometry(demoState);
 		a3demo_unloadShaders(demoState);
 		a3demo_unloadTextures(demoState);
+		a3demo_unloadFramebuffers(demoState);
 
 		// validate unload
 		a3demo_validateUnload(demoState);
@@ -385,9 +399,14 @@ A3DYLIBSYMBOL void a3demoCB_windowResize(a3_DemoState *demoState, a3i32 newWindo
 	demoState->frameAspect = frameAspect;
 	demoState->frameBorder = frameBorder;
 
+	// ****TO-DO: 
+	//	-> 2.1b: framebuffer reload
+	/*
 	// framebuffers should be initialized or re-initialized here 
 	//	since they are likely dependent on the window size
-
+	a3demo_unloadFramebuffers(demoState);
+	a3demo_loadFramebuffers(demoState);
+	*/
 
 	// use framebuffer deactivate utility to set viewport
 	a3framebufferDeactivateSetViewport(a3fbo_depthDisable, -frameBorder, -frameBorder, demoState->frameWidth, demoState->frameHeight);

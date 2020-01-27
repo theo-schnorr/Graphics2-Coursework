@@ -73,23 +73,46 @@ extern "C"
 		demoStateMaxCount_vertexArray = 8,
 		demoStateMaxCount_drawable = 16,
 		
-		demoStateMaxCount_shaderProgram = 16,
+		demoStateMaxCount_shaderProgram = 32,
 		
 		demoStateMaxCount_texture = 16,
+
+		demoStateMaxCount_framebuffer = 1,
 	};
 
 	// additional counters for demo modes
 	enum a3_DemoStateModeCounts
 	{
 		demoStateMaxModes = 1,
-		demoStateMaxSubModes = 1,
-		demoStateMaxOutputModes = 1,
+		demoStateMaxSubModes = 2,
+		demoStateMaxOutputModes = 9,
 	};
 
 	// demo mode names
 	enum a3_DemoStateModeNames
 	{
 		demoStateMode_main,
+	};
+
+	// demo sub-mode names
+	enum a3_DemoStateSubModeNames_main
+	{
+		demoStateSubMode_main_shading,
+		demoStateSubMode_main_mrt,
+	};
+
+	// demo output mode names
+	enum a3_DemoStateOutputNames_main_mrt
+	{
+		demoStateOutput_main_mrt_composite,
+		demoStateOutput_main_mrt_position,
+		demoStateOutput_main_mrt_normal,
+		demoStateOutput_main_mrt_texcoord,
+		demoStateOutput_main_mrt_diffuseTex,
+		demoStateOutput_main_mrt_specularTex,
+		demoStateOutput_main_mrt_diffuseLight,
+		demoStateOutput_main_mrt_specularLight,
+		demoStateOutput_main_mrt_fragdepth,
 	};
 
 
@@ -109,6 +132,18 @@ extern "C"
 		demoStateForwardShadingMode_Lambert,
 		demoStateForwardShadingMode_Phong,
 		demoStateForwardShadingMode_nonphoto,
+
+		demoStateForwardShadingModeMax
+	};
+
+	// display modes
+	enum a3_DemoStateForwardDisplayModeNames
+	{
+		demoStateForwardDisplayMode_texture,
+		demoStateForwardDisplayMode_texture_colorManip,
+		demoStateForwardDisplayMode_texture_texcoordManip,
+
+		demoStateForwardDisplayModeMax
 	};
 
 	
@@ -167,6 +202,7 @@ extern "C"
 		a3boolean displayGrid, displayWorldAxes, displayObjectAxes, displayTangentBases;
 		a3boolean displaySkybox, displayHiddenVolumes, displayPipeline;
 		a3boolean updateAnimation;
+		a3boolean stencilTest;
 
 		// grid properties
 		a3mat4 gridTransform;
@@ -180,6 +216,9 @@ extern "C"
 		a3ui32 forwardShadingMode, forwardShadingModeCount;
 		a3ui32 forwardLightCount;
 		a3_DemoPointLight forwardPointLight[demoStateMaxCount_lightObject];
+
+		// display modes
+		a3ui32 forwardDisplayMode, forwardDisplayModeCount;
 
 
 		//---------------------------------------------------------------------
@@ -286,19 +325,25 @@ extern "C"
 			a3_DemoStateShaderProgram shaderProgram[demoStateMaxCount_shaderProgram];
 			struct {
 				a3_DemoStateShaderProgram
+					prog_transform_instanced[1],				// transform vertex only with instancing; no fragment shader
+					prog_transform[1];							// transform vertex only; no fragment shader
+				a3_DemoStateShaderProgram
 					prog_drawColorAttrib_instanced[1],			// draw color attribute with instancing
 					prog_drawColorUnif_instanced[1],			// draw uniform color with instancing
 					prog_drawColorAttrib[1],					// draw color attribute
 					prog_drawColorUnif[1];						// draw uniform color
-				// ****TO-DO: 
-				//	-> 2.1a: new program declarations
-				/*
 				a3_DemoStateShaderProgram
 					prog_drawNonphoto_multi[1],					// draw non-photorealistic shading model, multiple lights
 					prog_drawPhong_multi[1],					// draw Phong shading model, multiple lights
 					prog_drawLambert_multi[1],					// draw Lambert shading model, multiple lights
 					prog_drawTexture[1];						// draw texture
-				*/
+				a3_DemoStateShaderProgram
+					prog_drawTexture_coordManip[1],				// draw texture with manipulated texture coordinates
+					prog_drawTexture_colorManip[1],				// draw texture with manipulated output color
+					prog_drawNonphoto_multi_mrt[1],				// draw non-photorealistic shading model, multiple lights, MRT
+					prog_drawPhong_multi_mrt[1],				// draw Phong shading model, multiple lights, MRT
+					prog_drawLambert_multi_mrt[1],				// draw Lambert shading model, multiple lights, MRT
+					prog_drawTexture_mrt[1];					// draw texture, MRT
 			};
 		};
 
@@ -322,6 +367,20 @@ extern "C"
 		};
 
 
+		// ****TO-DO: 
+		//	-> 2.1a: framebuffer object union
+		/*
+		// framebuffers
+		union {
+			a3_Framebuffer framebuffer[demoStateMaxCount_framebuffer];
+			struct {
+				a3_Framebuffer
+					fbo_scene[1];								// framebuffer for capturing scene
+			};
+		};
+		*/
+
+
 		// managed objects, no touchie
 		a3_VertexDrawable dummyDrawable[1];
 
@@ -343,12 +402,14 @@ extern "C"
 	void a3demo_loadGeometry(a3_DemoState* demoState);
 	void a3demo_loadShaders(a3_DemoState* demoState);
 	void a3demo_loadTextures(a3_DemoState* demoState);
+	void a3demo_loadFramebuffers(a3_DemoState* demoState);
 	void a3demo_refresh(a3_DemoState* demoState);
 
 	// unloading
 	void a3demo_unloadGeometry(a3_DemoState* demoState);
 	void a3demo_unloadShaders(a3_DemoState* demoState);
 	void a3demo_unloadTextures(a3_DemoState* demoState);
+	void a3demo_unloadFramebuffers(a3_DemoState* demoState);
 	void a3demo_validateUnload(a3_DemoState const* demoState);
 
 	// other utils & setup
