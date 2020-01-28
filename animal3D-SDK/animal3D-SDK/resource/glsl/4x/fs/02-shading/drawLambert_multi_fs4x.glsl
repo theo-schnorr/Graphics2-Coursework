@@ -54,10 +54,11 @@ void main()
 
 	for(int i = 0; i  < uLightCt; i++)
 	{
-		//newColor = LambertReflection(oMVNormie, uLightPos[i], oVSPos, uLightCol[i])* texture(uTex_dm, oTexCoord.xy);
+		newColor = LambertReflection(oMVNormie, uLightPos+1, oVSPos, uLightCol+1)* texture(uTex_dm, oTexCoord.xy); //right now only two of the textures show up
 	}
 
-	rtFragColor = LambertReflection(oMVNormie, uLightPos, oVSPos, uLightCol)* texture(uTex_dm, oTexCoord.xy);
+	rtFragColor = newColor;
+	//rtFragColor = LambertReflection(oMVNormie, uLightPos, oVSPos, uLightCol)* texture(uTex_dm, oTexCoord.xy);
 	//rtFragColor = uLightCol;
 	//rtFragColor = oTexCoord;
 	//rtFragColor = oVSPos;
