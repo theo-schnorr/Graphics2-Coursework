@@ -39,24 +39,35 @@ uniform sampler2D uTex_dm;
 uniform int uLightCt;
 uniform float uLightSz;
 uniform float uLightSzInvSq;
-uniform float uLightPos;
 uniform vec4 uLightCol;
+uniform vec4 uLightPos;
+//uniform vec4[] uLightPos; //we cant get the array size as "const"
+//uniform vec4[] uLightCol;
 
 out vec4 rtFragColor;
 
+vec4 LambertReflection(vec4 n, vec4 l, vec4 pos, vec4 color);
 
 void main()
 {
-	rtFragColor = LambertReflection(oMVNormie, uLightPos, uLightCol) * texture(uTex_dm, oTexCoord.xy);
+	vec4 newColor = vec4(0.0, 0.0, 0.0, 0.0);
+
+	for(int i = 0; i  < uLightCt; i++)
+	{
+		//newColor = LambertReflection(oMVNormie, uLightPos[i], oVSPos, uLightCol[i])* texture(uTex_dm, oTexCoord.xy);
+	}
+
+	rtFragColor = LambertReflection(oMVNormie, uLightPos, oVSPos, uLightCol)* texture(uTex_dm, oTexCoord.xy);
 	//rtFragColor = uLightCol;
 	//rtFragColor = oTexCoord;
 	//rtFragColor = oVSPos;
 	//rtFragColor = oMVNormie;
 }
 
-vec4 LambertReflection(vec4 n, vec4 l, vec4 color)
+vec4 LambertReflection(vec4 n, vec4 l, vec4 pos, vec4 color)
 {
-	float dotPro = dot(n, l);
+	vec4 normalizedL = normalize(l-pos);
+	float dotPro = dot(n, normalizedL);
 	
 	return dotPro * color;
 }

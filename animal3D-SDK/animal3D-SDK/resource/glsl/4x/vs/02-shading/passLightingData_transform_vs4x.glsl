@@ -57,5 +57,5 @@ void main()
 	oMVNormie = uMV_nrm * aNormal; 
 	oTexCoord = uAtlas * aTexCoord;
 	
-	gl_Position = uP* uMV * aPosition;
+	gl_Position = uP * uMV * aPosition;
 }
