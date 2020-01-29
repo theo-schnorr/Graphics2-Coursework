@@ -39,8 +39,8 @@ uniform sampler2D uTex_dm;
 uniform int uLightCt;
 uniform float uLightSz;
 uniform float uLightSzInvSq;
-uniform vec4 uLightPos;
-uniform vec4 uLightCol;
+uniform vec4 uLightPos[4];
+uniform vec4 uLightCol[4];
 
 out vec4 rtFragColor;
 
@@ -51,8 +51,15 @@ void main()
 {
 	// DUMMY OUTPUT: all fragments are OPAQUE GREEN
 	// phong = diffuse + specular + ambient;
-	float phong = diffuse(oMVNormie, uLightPos, oVSPos) + specular(vec4(0.0, 0.0, 0.0, 1.0), oVSPos, oMVNormie, uLightPos, 1.0) + 0;
-	rtFragColor = phong * uLightCol * texture(uTex_dm, oTexCoord.xy);
+	float phong = 0;
+	for(int i = 0; i  < uLightCt; i++)
+	{
+		phong += diffuse(oMVNormie, uLightPos[i], oVSPos) + specular(vec4(0.0, 0.0, 0.0, 1.0), oVSPos, oMVNormie, uLightPos[i], 1.0);
+	}
+
+	phong += 0.3;
+
+	rtFragColor = phong * texture(uTex_dm, oTexCoord.xy);
 }
 
 
