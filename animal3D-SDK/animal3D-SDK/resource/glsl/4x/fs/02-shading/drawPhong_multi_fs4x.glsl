@@ -51,15 +51,13 @@ void main()
 {
 	// DUMMY OUTPUT: all fragments are OPAQUE GREEN
 	// phong = diffuse + specular + ambient;
-	float phong = 0;
+	vec4 phong  = vec4(0.0,0.0,0.0, 0.0);
 	for(int i = 0; i  < uLightCt; i++)
 	{
-		phong += diffuse(oMVNormie, uLightPos[i], oVSPos) + specular(vec4(0.0, 0.0, 0.0, 1.0), oVSPos, oMVNormie, uLightPos[i], 1.0);
+		phong += (diffuse(oMVNormie, uLightPos[i], oVSPos)*uLightCol[i] + specular(vec4(0.0, 0.0, 0.0, 1.0), oVSPos, oMVNormie, uLightPos[i], 1.0));
 	}
 
-	phong += 0.3;
-
-	rtFragColor = phong * texture(uTex_dm, oTexCoord.xy);
+	rtFragColor = phong  * texture(uTex_dm, oTexCoord.xy);
 }
 
 
@@ -75,7 +73,7 @@ float specular(vec4 viewerPos, vec4 pos, vec4 n, vec4 l, float shinyConstant)
 {
 	vec4 normalizedViewer = normalize(viewerPos - pos);
 	vec4 normalizedLight = normalize(l-pos);
-	vec4 normalizedReflection = 2* diffuse(n, l, pos) * n - normalizedLight;
+	vec4 normalizedReflection = 2 * diffuse(n, l, pos) * n - normalizedLight;
 	float specular = pow(dot(normalizedViewer, normalizedReflection), shinyConstant); //we dont know what the shiny constant should be (what uniform)
 
 	return specular;
