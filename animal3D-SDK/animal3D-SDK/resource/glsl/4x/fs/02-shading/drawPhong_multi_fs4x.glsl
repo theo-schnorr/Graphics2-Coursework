@@ -51,10 +51,12 @@ void main()
 {
 	// DUMMY OUTPUT: all fragments are OPAQUE GREEN
 	// phong = diffuse + specular + ambient;
+	vec4 normalizedN = normalize(oMVNormie);
 	vec4 phong  = vec4(0.0,0.0,0.0, 0.0);
+
 	for(int i = 0; i  < uLightCt; i++)
 	{
-		phong += (diffuse(oMVNormie, uLightPos[i], oVSPos)*uLightCol[i] + specular(vec4(0.0, 0.0, 0.0, 1.0), oVSPos, oMVNormie, uLightPos[i], 1.0));
+		phong += (diffuse(normalizedN, uLightPos[i], oVSPos)*uLightCol[i] + specular(-oVSPos, oVSPos, normalizedN, uLightPos[i], 1.0));
 	}
 
 	rtFragColor = phong  * texture(uTex_dm, oTexCoord.xy);

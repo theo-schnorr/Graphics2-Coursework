@@ -47,13 +47,16 @@ float LambertReflection(vec4 n, vec4 l, vec4 pos);
 
 void main()
 {
+	vec4 normalizedN = normalize(oMVNormie);
 	vec4 newColor = vec4(0.0,0.0,0.0, 0.0);
 
 	for(int i = 0; i  < uLightCt; i++)
 	{
-		newColor = LambertReflection(oMVNormie, uLightPos[i], oVSPos)* uLightCol[i];
-		rtFragColor += newColor * texture(uTex_dm, oTexCoord.xy);
+		newColor = LambertReflection(normalizedN, uLightPos[i], oVSPos)* uLightCol[i];
+		rtFragColor += newColor;
 	}
+
+	rtFragColor *= texture(uTex_dm, oTexCoord.xy);
 
 	//rtFragColor = LambertReflection(oMVNormie, uLightPos[0], oVSPos)* uLightCol[0]* texture(uTex_dm, oTexCoord.xy);
 	//rtFragColor = oTexCoord;
