@@ -31,10 +31,43 @@
 //	4) implement Lambert shading model
 //	Note: test all data and inbound values before using them!
 
+in vec4 oMVNormie;
+in vec4 oVSPos; 
+in vec4 oTexCoord;
+
+uniform sampler2D uTex_dm;
+uniform int uLightCt;
+uniform float uLightSz;
+uniform float uLightSzInvSq;
+uniform vec4 uLightPos[4];
+uniform vec4 uLightCol[4];
+
 out vec4 rtFragColor;
+
+float diffuse(vec4 n, vec4 l, vec4 pos);
+float specular(vec4 viewer, vec4 pos, vec4 n, vec4 l, float shinyConstant);
 
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE RED
-	rtFragColor = vec4(1.0, 0.0, 0.0, 1.0);
+	// DUMMY OUTPUT: all fragments are OPAQUE GREEN
+	// phong = diffuse + specular + ambient;
+	vec4 normalizedN = normalize(oMVNormie);
+	vec4 color = vec4(0.0, 0.0, 0.0, 1.0);
+
+	for(int i = 0; i  < uLightCt; i++)
+	{
+		color += diffuse(normalizedN, uLightPos[i], oVSPos) * uLightCol[i];
+	}
+
+	rtFragColor = color;
+	rtFragColor *= texture(uTex_dm, oTexCoord.xy);
+}
+
+
+float diffuse(vec4 n, vec4 l, vec4 pos)
+{
+	vec4 normalizedL = normalize(l-pos);
+	float dotPro = dot(n, normalizedL);
+	
+	return dotPro;
 }
