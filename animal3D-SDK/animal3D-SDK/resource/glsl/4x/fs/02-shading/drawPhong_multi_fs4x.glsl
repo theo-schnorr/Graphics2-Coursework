@@ -36,6 +36,7 @@ in vec4 oVSPos;
 in vec4 oTexCoord;
 
 uniform sampler2D uTex_dm;
+uniform sampler2D uTex_sm;
 uniform int uLightCt;
 uniform float uLightSz;
 uniform float uLightSzInvSq;
@@ -56,10 +57,10 @@ void main()
 
 	for(int i = 0; i  < uLightCt; i++)
 	{
-		phong += (diffuse(normalizedN, uLightPos[i], oVSPos)*uLightCol[i] + specular(-oVSPos, oVSPos, normalizedN, uLightPos[i], 1.0));
+		phong += (diffuse(normalizedN, uLightPos[i], oVSPos)*uLightCol[i]* texture(uTex_dm, oTexCoord.xy) + specular(vec4(0.0,0.0,0.0,1.0), oVSPos, normalizedN, uLightPos[i], 1.0))* texture(uTex_sm, oTexCoord.xy);
 	}
 
-	rtFragColor = phong  * texture(uTex_dm, oTexCoord.xy);
+	rtFragColor = phong; //we didnt add ambient oh well it would probably super small anyway
 }
 
 
