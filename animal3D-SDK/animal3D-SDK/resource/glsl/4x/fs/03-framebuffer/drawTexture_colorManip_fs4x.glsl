@@ -31,10 +31,14 @@
 //	4) modify sample in some creative way
 //	5) assign modified sample to output color
 
+in vec4 oTexCoord;
+
+uniform sampler2D uTex_dm;
+
 out vec4 rtFragColor;
 
 void main()
 {
 	// DUMMY OUTPUT: all fragments are OPAQUE LIGHT GREY
-	rtFragColor = vec4(0.5, 0.5, 0.5, 1.0);
+	rtFragColor = texture(uTex_dm, oTexCoord.xy);
 }
