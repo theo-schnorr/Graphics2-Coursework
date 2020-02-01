@@ -431,6 +431,14 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 				drawLambert_multi_fs[1],
 				drawPhong_multi_fs[1],
 				drawNonphoto_multi_fs[1];
+			// 03-framebuffer
+			a3_DemoStateShader
+				drawTexture_mrt_fs[1],
+				drawTexture_colorManip_fs[1],
+				drawTexture_coordManip_fs[1],
+				drawLambert_multi_mrt_fs[1],
+				drawPhong_multi_mrt_fs[1],
+				drawNonphoto_multi_mrt_fs[1];
 		};
 	} shaderList = {
 		{
@@ -458,6 +466,13 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			{ { { 0 },	"shdr-fs:draw-Lambert-multi",		a3shader_fragment,	1,{ A3_DEMO_FS"02-shading/e/drawLambert_multi_fs4x.glsl" } } },
 			{ { { 0 },	"shdr-fs:draw-Phong-multi",			a3shader_fragment,	1,{ A3_DEMO_FS"02-shading/e/drawPhong_multi_fs4x.glsl" } } },
 			{ { { 0 },	"shdr-fs:draw-nonphoto-multi",		a3shader_fragment,	1,{ A3_DEMO_FS"02-shading/e/drawNonphoto_multi_fs4x.glsl" } } },
+			// 03-framebuffer
+			{ { { 0 },	"shdr-fs:draw-tex-mrt",				a3shader_fragment,	1,{ A3_DEMO_FS"03-framebuffer/e/drawTexture_mrt_fs4x.glsl" } } },
+			{ { { 0 },	"shdr-fs:draw-tex-colormanip",		a3shader_fragment,	1,{ A3_DEMO_FS"03-framebuffer/e/drawTexture_colorManip_fs4x.glsl" } } },
+			{ { { 0 },	"shdr-fs:draw-tex-coordmanip",		a3shader_fragment,	1,{ A3_DEMO_FS"03-framebuffer/e/drawTexture_coordManip_fs4x.glsl" } } },
+			{ { { 0 },	"shdr-fs:draw-Lambert-multi-mrt",	a3shader_fragment,	1,{ A3_DEMO_FS"03-framebuffer/e/drawLambert_multi_mrt_fs4x.glsl" } } },
+			{ { { 0 },	"shdr-fs:draw-Phong-multi-mrt",		a3shader_fragment,	1,{ A3_DEMO_FS"03-framebuffer/e/drawPhong_multi_mrt_fs4x.glsl" } } },
+			{ { { 0 },	"shdr-fs:draw-nonphoto-multi-mrt",	a3shader_fragment,	1,{ A3_DEMO_FS"03-framebuffer/e/drawNonphoto_multi_mrt_fs4x.glsl" } } },
 		}
 	};
 	a3_DemoStateShader *const shaderListPtr = (a3_DemoStateShader *)(&shaderList), *shaderPtr;
@@ -487,6 +502,14 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 	//	- attach shader objects
 
 	// base programs: 
+	// transform-only program
+	currentDemoProg = demoState->prog_transform;
+	a3shaderProgramCreate(currentDemoProg->program, "prog:transform");
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passthru_transform_vs->shader);
+	// transform-only program with instancing
+	currentDemoProg = demoState->prog_transform_instanced;
+	a3shaderProgramCreate(currentDemoProg->program, "prog:transform-inst");
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passthru_transform_instanced_vs->shader);
 	// uniform color program
 	currentDemoProg = demoState->prog_drawColorUnif;
 	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-col-unif");
@@ -509,42 +532,58 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawColorAttrib_fs->shader);
 
 	// 02-shading programs: 
-	// ****TO-DO: 
-	//	-> 2.1b: texturing program initialization
-	/*
 	// texturing program
 	currentDemoProg = demoState->prog_drawTexture;
 	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-tex");
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passTexcoord_transform_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawTexture_fs->shader);
-	*/
-	// ****TO-DO: 
-	//	-> 3.1a: Lambert shading program initialization
-	/*
 	// Lambert shading program
 	currentDemoProg = demoState->prog_drawLambert_multi;
 	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-Lambert-multi");
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passLightingData_transform_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawLambert_multi_fs->shader);
-	*/
-	// ****TO-DO: 
-	//	-> 4.1b: Phong shading program initialization
-	/*
 	// Phong shading program
 	currentDemoProg = demoState->prog_drawPhong_multi;
 	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-Phong-multi");
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passLightingData_transform_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawPhong_multi_fs->shader);
-	*/
-	// ****TO-DO: 
-	//	-> 2.1b: nonphotorealistic shading program initialization
-	/*
 	// nonphotorealistic shading program
 	currentDemoProg = demoState->prog_drawNonphoto_multi;
-	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-Nonphoto-multi");
+	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-nonphoto-multi");
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passLightingData_transform_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawNonphoto_multi_fs->shader);
-	*/
+
+	// 03-framebuffer programs: 
+	// texturing program with MRT
+	currentDemoProg = demoState->prog_drawTexture_mrt;
+	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-tex-mrt");
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passTexcoord_transform_vs->shader);
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawTexture_mrt_fs->shader);
+	// Lambert shading program with MRT
+	currentDemoProg = demoState->prog_drawLambert_multi_mrt;
+	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-Lambert-multi-mrt");
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passLightingData_transform_vs->shader);
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawLambert_multi_mrt_fs->shader);
+	// Phong shading program with MRT
+	currentDemoProg = demoState->prog_drawPhong_multi_mrt;
+	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-Phong-multi-mrt");
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passLightingData_transform_vs->shader);
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawPhong_multi_mrt_fs->shader);
+	// nonphotorealistic shading program with MRT
+	currentDemoProg = demoState->prog_drawNonphoto_multi_mrt;
+	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-nonphoto-multi-mrt");
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passLightingData_transform_vs->shader);
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawNonphoto_multi_mrt_fs->shader);
+	// texturing with color manipulation
+	currentDemoProg = demoState->prog_drawTexture_colorManip;
+	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-tex-colormanip");
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passTexcoord_transform_vs->shader);
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawTexture_colorManip_fs->shader);
+	// texturing with texcoord manipulation
+	currentDemoProg = demoState->prog_drawTexture_coordManip;
+	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-tex-coordmanip");
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passTexcoord_transform_vs->shader);
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawTexture_coordManip_fs->shader);
 
 
 	// activate a primitive for validation
@@ -736,6 +775,60 @@ void a3demo_loadTextures(a3_DemoState* demoState)
 }
 
 
+// utility to load framebuffers
+void a3demo_loadFramebuffers(a3_DemoState* demoState)
+{
+	// storage precision and targets
+	const a3_FramebufferColorType colorType_scene = a3fbo_colorRGBA16;
+	const a3_FramebufferDepthType depthType_scene = a3fbo_depth24_stencil8;
+	const a3ui32 targets_scene = 8;
+
+	// ****TO-DO: 
+	//	-> 2.1c: framebuffer initialization
+	/*
+	// create framebuffers and change their texture settings if need be
+	a3_Framebuffer* fbo;
+	a3ui32 i, j;
+
+
+	// initialize framebuffers: 
+	//	- scene, with or without MRT (determine your needs), add depth
+	//	- shadow map, depth only
+	fbo = demoState->fbo_scene;
+	a3framebufferCreate(fbo, "fbo:scene",
+		targets_scene, colorType_scene, depthType_scene,
+		demoState->frameWidth, demoState->frameHeight);
+
+
+	// change texture settings for all framebuffers
+	for (i = 0, fbo = demoState->framebuffer;
+		i < demoStateMaxCount_framebuffer;
+		++i, ++fbo)
+	{
+		// color, if applicable
+		for (j = 0; j < fbo->color; ++j)
+		{
+			a3framebufferBindColorTexture(fbo, a3tex_unit00, j);
+			a3textureChangeRepeatMode(a3tex_repeatClamp, a3tex_repeatClamp);
+			a3textureChangeFilterMode(a3tex_filterLinear);
+		}
+
+		// depth, if applicable
+		if (fbo->depthStencil)
+		{
+			a3framebufferBindDepthTexture(fbo, a3tex_unit00);
+			a3textureChangeRepeatMode(a3tex_repeatClamp, a3tex_repeatClamp);
+			a3textureChangeFilterMode(a3tex_filterLinear);
+		}
+	}
+	*/
+
+
+	// deactivate texture
+	a3textureDeactivate(a3tex_unit00);
+}
+
+
 //-----------------------------------------------------------------------------
 
 // internal utility for refreshing drawable
@@ -753,12 +846,19 @@ inline void a3_refreshDrawable_internal(a3_VertexDrawable *drawable, a3_VertexAr
 //	...or just set new function pointers!
 void a3demo_refresh(a3_DemoState *demoState)
 {
+	// ****TO-DO: 
+	//	-> 2.1d: uncomment framebuffer refresh
+
 	a3_BufferObject *currentBuff = demoState->drawDataBuffer,
 		*const endBuff = currentBuff + demoStateMaxCount_drawDataBuffer;
 	a3_VertexArrayDescriptor *currentVAO = demoState->vertexArray,
 		*const endVAO = currentVAO + demoStateMaxCount_vertexArray;
 	a3_DemoStateShaderProgram *currentProg = demoState->shaderProgram,
 		*const endProg = currentProg + demoStateMaxCount_shaderProgram;
+	a3_Texture* currentTex = demoState->texture,
+		* const endTex = currentTex + demoStateMaxCount_texture;
+//	a3_Framebuffer* currentFBO = demoState->framebuffer,
+//		* const endFBO = currentFBO + demoStateMaxCount_framebuffer;
 
 	// set pointers to appropriate release callback for different asset types
 	while (currentBuff < endBuff)
@@ -767,6 +867,10 @@ void a3demo_refresh(a3_DemoState *demoState)
 		a3vertexArrayHandleUpdateReleaseCallback(currentVAO++);
 	while (currentProg < endProg)
 		a3shaderProgramHandleUpdateReleaseCallback((currentProg++)->program);
+	while (currentTex < endTex)
+		a3textureHandleUpdateReleaseCallback(currentTex++);
+//	while (currentFBO < endFBO)
+//		a3framebufferHandleUpdateReleaseCallback(currentFBO++);
 
 	// re-link specific object pointers for different asset types
 	currentBuff = demoState->vbo_staticSceneObjectDrawBuffer;
