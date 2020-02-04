@@ -39,6 +39,7 @@ in vec4 oVSPos;
 in vec4 oTexCoord;
 
 uniform sampler2D uTex_dm;
+uniform sampler2D uTex_sm;
 uniform int uLightCt;
 uniform float uLightSz;
 uniform float uLightSzInvSq;
@@ -65,27 +66,33 @@ void main()
 	vec4 normalizedN = normalize(oMVNormie);
 	vec4 phong  = vec4(0.0,0.0,0.0, 0.0);
 	vec4 diffuseColor = vec4(0.0, 0.0, 0.0, 1.0);
+	vec4 specularColor = vec4(0.0, 0.0, 0.0, 1.0);
+	vec4 diffuseTex;
+	vec4 specularTex;
 
 	for(int i = 0; i  < uLightCt; i++)
 	{
 		// Diffuse color and diffuse texture
 		diffuseColor += diffuse(normalizedN, uLightPos[i], oVSPos) * uLightCol[i];
-		phong += (diffuse(normalizedN, uLightPos[i], oVSPos)*uLightCol[i] + specular(vec4(0.0, 0.0, 0.0, 0.0), oVSPos, normalizedN, uLightPos[i], 1.0));
 		// Specular color and specular texture
+		specularColor += specular(vec4(0.0, 0.0, 0.0, 0.0), oVSPos, normalizedN, uLightPos[i], 1.0) * uLightCol[i];
 	}
 
-	// Phong  = diffuse tex + spec tex
+	diffuseTex = diffuseColor * texture(uTex_dm, oTexCoord.xy);
+	specularTex = specularColor * texture(uTex_sm, oTexCoord.xy);
 
-	rtFragColor = phong  * texture(uTex_dm, oTexCoord.xy);
+	phong  = diffuseTex + specularTex;
+
+	rtFragColor = phong;
 
 	// lab 3
 	rtPosition = oVSPos;
 	rtNormal = normalizedN;
 	rtTexCoord = oTexCoord;
 	rtDiffuseTex = texture(uTex_dm, oTexCoord.xy);
-	// rtSpecularTex = ;
+	rtSpecularTex = texture(uTex_sm, oTexCoord.xy);
 	rtDiffuseLight = diffuseColor;
-	// rtSpecularLight = ;
+	rtSpecularLight = specularColor;
 }
 
 

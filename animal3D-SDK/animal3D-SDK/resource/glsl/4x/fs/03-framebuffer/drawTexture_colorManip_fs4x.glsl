@@ -34,11 +34,16 @@
 in vec4 oTexCoord;
 
 uniform sampler2D uTex_dm;
+uniform float uTime;
 
 out vec4 rtFragColor;
 
 void main()
 {
 	// DUMMY OUTPUT: all fragments are OPAQUE LIGHT GREY
-	rtFragColor = texture(uTex_dm, oTexCoord.xy);
+	vec4 modifiedTex = texture(uTex_dm, oTexCoord.xy);
+	modifiedTex = vec4(cos(modifiedTex.x) * mod(uTime, 100), sin(modifiedTex.y), tan(modifiedTex.z), 1.0);
+	
+
+	rtFragColor = modifiedTex;
 }
