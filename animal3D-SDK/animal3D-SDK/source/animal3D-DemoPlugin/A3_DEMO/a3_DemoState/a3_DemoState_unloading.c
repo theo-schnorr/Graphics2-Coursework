@@ -83,15 +83,11 @@ void a3demo_unloadTextures(a3_DemoState* demoState)
 // utility to unload framebuffers
 void a3demo_unloadFramebuffers(a3_DemoState* demoState)
 {
-	// ****TO-DO: 
-	//	-> 2.1e: framebuffer unloading
-	/*
 	a3_Framebuffer* currentFBO = demoState->framebuffer,
 		* const endFBO = currentFBO + demoStateMaxCount_framebuffer;
 
 	while (currentFBO < endFBO)
 		a3framebufferRelease(currentFBO++);
-	*/
 }
 
 
@@ -100,9 +96,6 @@ void a3demo_unloadFramebuffers(a3_DemoState* demoState)
 // confirm that all graphics objects were unloaded
 void a3demo_validateUnload(const a3_DemoState *demoState)
 {
-	// ****TO-DO: 
-	//	-> 2.1f: validate release of framebuffers
-
 	a3ui32 handle;
 	const a3_BufferObject *currentBuff = demoState->drawDataBuffer,
 		*const endBuff = currentBuff + demoStateMaxCount_drawDataBuffer;
@@ -112,8 +105,8 @@ void a3demo_validateUnload(const a3_DemoState *demoState)
 		*const endProg = currentProg + demoStateMaxCount_shaderProgram;
 	const a3_Texture* currentTex = demoState->texture,
 		* const endTex = currentTex + demoStateMaxCount_texture;
-//	const a3_Framebuffer* currentFBO = demoState->framebuffer,
-//		* const endFBO = currentFBO + demoStateMaxCount_framebuffer;
+	const a3_Framebuffer* currentFBO = demoState->framebuffer,
+		* const endFBO = currentFBO + demoStateMaxCount_framebuffer;
 
 	handle = 0;
 	while (currentBuff < endBuff)
@@ -139,11 +132,11 @@ void a3demo_validateUnload(const a3_DemoState *demoState)
 	if (handle)
 		printf("\n A3 Warning: One or more textures not released.");
 
-//	handle = 0;
-//	while (currentFBO < endFBO)
-//		handle += (currentFBO++)->handle->handle;
-//	if (handle)
-//		printf("\n A3 Warning: One or more framebuffers not released.");
+	handle = 0;
+	while (currentFBO < endFBO)
+		handle += (currentFBO++)->handle->handle;
+	if (handle)
+		printf("\n A3 Warning: One or more framebuffers not released.");
 }
 
 
