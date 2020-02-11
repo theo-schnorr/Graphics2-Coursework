@@ -32,6 +32,13 @@
 uniform sampler2D uImage00;
 
 layout (location = 0) out vec4 rtFragColor;
+// rtLuminance;
+
+float RelativeLuminance(vec3 c)
+{
+	// Always make sure components in a weighted average add into one
+	return (0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b);
+}
 
 void main()
 {
