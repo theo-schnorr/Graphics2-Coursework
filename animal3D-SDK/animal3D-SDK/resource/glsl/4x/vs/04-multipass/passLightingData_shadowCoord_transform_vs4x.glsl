@@ -52,7 +52,7 @@ void main()
 	oVSPos = uMV * aPosition;
 	oMVNormie = uMV_nrm * aNormal; 
 	oTexCoord = uAtlas * aTexCoord;
-	oShadowCoord = uMVPB * aPosition;
+	oShadowCoord = uMVPB * aPosition; //multiplying the projective texturing VS 
 	
 	gl_Position = uP * uMV * aPosition;
 }

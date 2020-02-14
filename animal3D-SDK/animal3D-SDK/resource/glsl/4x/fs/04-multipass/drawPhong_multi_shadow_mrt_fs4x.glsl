@@ -63,7 +63,6 @@ float specular(vec4 viewer, vec4 pos, vec4 n, vec4 l, float shinyConstant);
 
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE GREEN
 	// phong = diffuse + specular + ambient;
 	vec4 normalizedN = normalize(oMVNormie);
 	vec4 phong  = vec4(0.0,0.0,0.0, 0.0);
@@ -77,7 +76,7 @@ void main()
 		// Diffuse color and diffuse texture
 		diffuseColor += diffuse(normalizedN, uLightPos[i], oVSPos) * uLightCol[i];
 		// Specular color and specular texture
-		specularColor += specular(vec4(0.0, 0.0, 0.0, 0.0), oVSPos, normalizedN, uLightPos[i], 1.0) * uLightCol[i];
+		specularColor += specular(vec4(0.0, 0.0, 0.0, 1.0), oVSPos, normalizedN, uLightPos[i], 1.0) * uLightCol[i];
 	}
 
 	diffuseTex = diffuseColor * texture(uTex_dm, oTexCoord.xy);
@@ -89,7 +88,7 @@ void main()
 	vec4 perspecDivide = oShadowCoord / oShadowCoord.w;
 	float shadowDepth = texture(uTex_shadow, perspecDivide.xy).r;
 
-	if(phong.z > (shadowDepth + .0025))
+	if( perspecDivide.z > (shadowDepth + .0025))
 	{
 		phong *= 0.2;
 	}
@@ -125,3 +124,4 @@ float specular(vec4 viewerPos, vec4 pos, vec4 n, vec4 l, float shinyConstant)
 
 	return specular;
 }
+

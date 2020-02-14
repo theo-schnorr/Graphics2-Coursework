@@ -31,10 +31,48 @@
 //	4) implement Lambert shading model
 //	Note: test all data and inbound values before using them!
 
+in vec4 oMVNormie;
+in vec4 oVSPos; 
+in vec4 oTexCoord;
+
+uniform sampler2D uTex_dm;
+uniform int uLightCt;
+uniform float uLightSz;
+uniform float uLightSzInvSq;
+uniform vec4 uLightCol[4];
+uniform vec4 uLightPos[4];
 out vec4 rtFragColor;
+
+float LambertReflection(vec4 n, vec4 l, vec4 pos);
 
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE RED
-	rtFragColor = vec4(1.0, 0.0, 0.0, 1.0);
+	vec4 normalizedN = normalize(oMVNormie);
+	vec4 newColor = vec4(0.0,0.0,0.0, 0.0);
+
+	for(int i = 0; i  < uLightCt; i++)
+	{
+		newColor = LambertReflection(normalizedN, uLightPos[i], oVSPos)* uLightCol[i];
+		rtFragColor += newColor;
+	}
+
+	rtFragColor *= texture(uTex_dm, oTexCoord.xy);
+
+	//rtFragColor = LambertReflection(oMVNormie, uLightPos[0], oVSPos)* uLightCol[0]* texture(uTex_dm, oTexCoord.xy);
+	//rtFragColor = oTexCoord;
+	//rtFragColor = oVSPos;
+	//rtFragColor = oMVNormie;
+	//rtFragColor = uLightCol[1];
+
+
+
+	
+}
+
+float LambertReflection(vec4 n, vec4 l, vec4 pos)
+{
+	vec4 normalizedL = normalize(l-pos);
+	float dotPro = dot(n, normalizedL);
+	
+	return dotPro;
 }

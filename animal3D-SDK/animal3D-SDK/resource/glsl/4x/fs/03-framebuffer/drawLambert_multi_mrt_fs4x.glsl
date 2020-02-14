@@ -32,11 +32,56 @@
 //	Note: test all data and inbound values before using them!
 //	5) set location of final color render target (location 0)
 //	6) declare render targets for each attribute and shading component
+in vec4 oMVNormie;
+in vec4 oVSPos; 
+in vec4 oTexCoord;
 
-out vec4 rtFragColor;
+uniform sampler2D uTex_dm;
+uniform int uLightCt;
+uniform float uLightSz;
+uniform float uLightSzInvSq;
+uniform vec4 uLightPos[4];
+uniform vec4 uLightCol[4];
+
+// lab 3
+layout (location = 0) out vec4 rtFragColor;
+layout (location = 1) out vec4 rtPosition;
+layout (location = 2) out vec4 rtNormal;
+layout (location = 3) out vec4 rtTexCoord;
+layout (location = 4) out vec4 rtDiffuseTex;
+layout (location = 6) out vec4 rtDiffuseLight;
+
+float diffuse(vec4 n, vec4 l, vec4 pos);
+float specular(vec4 viewer, vec4 pos, vec4 n, vec4 l, float shinyConstant);
 
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE RED
-	rtFragColor = vec4(1.0, 0.0, 0.0, 1.0);
+	// DUMMY OUTPUT: all fragments are OPAQUE GREEN
+	// phong = diffuse + specular + ambient;
+	vec4 normalizedN = normalize(oMVNormie);
+	vec4 color = vec4(0.0, 0.0, 0.0, 1.0);
+
+	for(int i = 0; i  < uLightCt; i++)
+	{
+		color += diffuse(normalizedN, uLightPos[i], oVSPos) * uLightCol[i];
+	}
+
+	rtFragColor = color;
+	rtFragColor *= texture(uTex_dm, oTexCoord.xy);
+
+	// lab 3
+	rtPosition = oVSPos;
+	rtNormal = normalizedN;
+	rtTexCoord = oTexCoord;
+	rtDiffuseTex = texture(uTex_dm, oTexCoord.xy);
+	rtDiffuseLight = color;
+}
+
+
+float diffuse(vec4 n, vec4 l, vec4 pos)
+{
+	vec4 normalizedL = normalize(l-pos);
+	float dotPro = dot(n, normalizedL);
+	
+	return dotPro;
 }
