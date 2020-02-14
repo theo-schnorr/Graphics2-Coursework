@@ -40,7 +40,7 @@ uniform mat4 uMV;
 uniform mat4 uP;
 uniform mat4 uMV_nrm;
 uniform mat4 uAtlas;
-uniform mat4 uMVPB;
+uniform mat4 uMVPB_other;
 
 out vec4 oMVNormie;
 out vec4 oVSPos; 
@@ -52,7 +52,7 @@ void main()
 	oVSPos = uMV * aPosition;
 	oMVNormie = uMV_nrm * aNormal; 
 	oTexCoord = uAtlas * aTexCoord;
-	oShadowCoord = uMVPB * aPosition; //multiplying the projective texturing VS 
+	oShadowCoord = uMVPB_other * aPosition; //multiplying the projective texturing VS 
 	
-	gl_Position = uP * uMV * aPosition;
+	gl_Position = uP * oVSPos;
 }
