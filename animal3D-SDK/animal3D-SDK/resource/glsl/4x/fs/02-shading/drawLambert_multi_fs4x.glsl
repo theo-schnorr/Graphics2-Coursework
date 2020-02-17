@@ -72,7 +72,7 @@ void main()
 float LambertReflection(vec4 n, vec4 l, vec4 pos)
 {
 	vec4 normalizedL = normalize(l-pos);
-	float dotPro = dot(n, normalizedL);
+	float dotPro = max(dot(n, normalizedL),0.0);
 	
 	return dotPro;
 }

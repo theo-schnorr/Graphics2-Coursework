@@ -57,7 +57,9 @@ void main()
 
 	for(int i = 0; i  < uLightCt; i++)
 	{
-		phong += (diffuse(normalizedN, uLightPos[i], oVSPos)*uLightCol[i]* texture(uTex_dm, oTexCoord.xy) + specular(vec4(0.0,0.0,0.0,1.0), oVSPos, normalizedN, uLightPos[i], 1.0))* texture(uTex_sm, oTexCoord.xy);
+		vec4 diffuse = diffuse(normalizedN, uLightPos[i], oVSPos)*uLightCol[i]* texture(uTex_dm, oTexCoord.xy);
+		vec4 specular = specular(vec4(0.0,0.0,0.0,1.0), oVSPos, normalizedN, uLightPos[i], 128.0) *  texture(uTex_sm, oTexCoord.xy);
+		phong += diffuse + specular;
 	}
 
 	rtFragColor = phong; //we didnt add ambient oh well it would probably super small anyway
@@ -67,7 +69,7 @@ void main()
 float diffuse(vec4 n, vec4 l, vec4 pos)
 {
 	vec4 normalizedL = normalize(l-pos);
-	float dotPro = dot(n, normalizedL);
+	float dotPro = max(dot(n, normalizedL), 0.0);
 	
 	return dotPro;
 }
@@ -76,8 +78,8 @@ float specular(vec4 viewerPos, vec4 pos, vec4 n, vec4 l, float shinyConstant)
 {
 	vec4 normalizedViewer = normalize(viewerPos - pos);
 	vec4 normalizedLight = normalize(l-pos);
-	vec4 normalizedReflection = 2 * diffuse(n, l, pos) * n - normalizedLight;
-	float specular = pow(dot(normalizedViewer, normalizedReflection), shinyConstant); //we dont know what the shiny constant should be (what uniform)
-
+	vec4 normalizedReflection = reflect(-normalizedLight,n);
+	float specular = pow(max(dot(normalizedReflection, normalizedViewer), 0.0), shinyConstant);
+	
 	return specular;
 }
