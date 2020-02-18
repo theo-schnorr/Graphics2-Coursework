@@ -628,7 +628,7 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawTexture_brightPass_fs->shader);
 	
 	// ****TO-DO: 
-	//	-> a: setup Gaussian blur program
+	//	-> 3.1a: setup Gaussian blur program
 	
 	// texturing with Gaussian blurring
 	currentDemoProg = demoState->prog_drawTexture_blurGaussian;
