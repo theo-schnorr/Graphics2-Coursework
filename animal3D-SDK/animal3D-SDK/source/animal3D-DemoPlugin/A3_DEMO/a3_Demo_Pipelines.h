@@ -85,6 +85,8 @@ extern "C"
 	enum a3_Demo_Pipelines_PipelineName
 	{
 		pipelines_forward,				// forward lighting pipeline
+		pipelines_deferred_shading,		// deferred shading pipeline
+		pipelines_deferred_lighting,	// deferred lighting pipeline
 
 		pipelines_pipeline_max
 	};
@@ -93,8 +95,13 @@ extern "C"
 	enum a3_Demo_Pipelines_PassName
 	{
 		pipelines_passShadow,			// capture shadow map
+
 		pipelines_passScene,			// render scene objects
+
+		pipelines_passLighting,			// light pre-pass for deferred lighting
+
 		pipelines_passComposite,		// composite for post-processing stage
+
 		pipelines_passBright_2,			// bright pass for bloom (half screen size)
 		pipelines_passBlurH_2,			// horizontal blur for bloom (half screen size)
 		pipelines_passBlurV_2,			// horizontal blur for bloom (half screen size)
@@ -127,6 +134,13 @@ extern "C"
 		pipelines_target_scene_max, 
 
 		pipelines_composite_finalcolor = 0,	// final display color
+		pipelines_composite_position,		// position attribute
+		pipelines_composite_normal,			// normal attribute
+		pipelines_composite_texcoord,		// texcoord attribute
+		pipelines_composite_diffuseMap,		// diffuse map sample
+		pipelines_composite_specularMap,	// specular map sample
+		pipelines_composite_diffuseLight,	// diffuse light total
+		pipelines_composite_specularLight,	// specular light total
 		pipelines_target_composite_max,
 
 		pipelines_bright_finalcolor = 0,	// final display color

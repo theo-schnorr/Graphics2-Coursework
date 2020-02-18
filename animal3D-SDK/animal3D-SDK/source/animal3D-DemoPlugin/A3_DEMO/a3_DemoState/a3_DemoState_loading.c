@@ -421,6 +421,11 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			// 04-multipass
 			a3_DemoStateShader
 				passLightingData_shadowCoord_transform_vs[1];
+			// 06-deferred
+			a3_DemoStateShader
+				passAtlasTexcoord_transform_vs[1],
+				passLightingData_transform_bias_vs[1],
+				passBiasedClipCoord_transform_instanced_vs[1];
 
 			// fragment shaders
 			// base
@@ -450,6 +455,12 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 				drawTexture_brightPass_fs[1],
 				drawTexture_blurGaussian_fs[1],
 				drawTexture_blendScreen4_fs[1];
+			// 06-deferred
+			a3_DemoStateShader
+				drawLightingData_fs[1],
+				drawPhong_multi_deferred_fs[1],
+				drawPhongVolume_fs[1],
+				drawPhongComposite_fs[1];
 		};
 	} shaderList = {
 		{
@@ -469,6 +480,10 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			{ { { 0 },	"shdr-vs:pass-light-trans",			a3shader_vertex  ,	1,{ A3_DEMO_VS"02-shading/e/passLightingData_transform_vs4x.glsl" } } },
 			// 04-multipass
 			{ { { 0 },	"shdr-vs:pass-light-shadow-trans",	a3shader_vertex  ,	1,{ A3_DEMO_VS"04-multipass/e/passLightingData_shadowCoord_transform_vs4x.glsl" } } },
+			// 06-deferred
+			{ { { 0 },	"shdr-vs:pass-atlas-tex-trans",		a3shader_vertex  ,	1,{ A3_DEMO_VS"06-deferred/e/passAtlasTexcoord_transform_vs4x.glsl" } } },
+			{ { { 0 },	"shdr-vs:pass-light-trans-bias",	a3shader_vertex  ,	1,{ A3_DEMO_VS"06-deferred/e/passLightingData_transform_bias_vs4x.glsl" } } },
+			{ { { 0 },	"shdr-vs:pass-biasedclip-inst",		a3shader_vertex  ,	1,{ A3_DEMO_VS"06-deferred/e/passBiasedClipCoord_transform_instanced_vs4x.glsl" } } },
 
 			// fs
 			// base
@@ -493,6 +508,11 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			{ { { 0 },	"shdr-fs:draw-tex-bright",			a3shader_fragment,	1,{ A3_DEMO_FS"05-bloom/e/drawTexture_brightPass_fs4x.glsl" } } },
 			{ { { 0 },	"shdr-fs:draw-tex-blur",			a3shader_fragment,	1,{ A3_DEMO_FS"05-bloom/e/drawTexture_blurGaussian_fs4x.glsl" } } },
 			{ { { 0 },	"shdr-fs:draw-tex-blend4",			a3shader_fragment,	1,{ A3_DEMO_FS"05-bloom/e/drawTexture_blendScreen4_fs4x.glsl" } } },
+			// 06-deferred
+			{ { { 0 },	"shdr-fs:draw-lightingdata",		a3shader_fragment,	1,{ A3_DEMO_FS"06-deferred/e/drawLightingData_fs4x.glsl" } } },
+			{ { { 0 },	"shdr-fs:draw-Phong-multi-def",		a3shader_fragment,	1,{ A3_DEMO_FS"06-deferred/e/drawPhong_multi_deferred_fs4x.glsl" } } },
+			{ { { 0 },	"shdr-fs:draw-Phong-volume",		a3shader_fragment,	1,{ A3_DEMO_FS"06-deferred/e/drawPhongVolume_fs4x.glsl" } } },
+			{ { { 0 },	"shdr-fs:draw-Phong-composite",		a3shader_fragment,	1,{ A3_DEMO_FS"06-deferred/e/drawPhongComposite_fs4x.glsl" } } },
 		}
 	};
 	a3_DemoStateShader *const shaderListPtr = (a3_DemoStateShader *)(&shaderList), *shaderPtr;
@@ -618,32 +638,58 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawTexture_outline_fs->shader);
 
 	// 05-bloom programs: 
-	// ****TO-DO: 
-	//	-> 2.1b: setup bright pass program
-	/*
 	// texturing with bright-pass or tone-mapping
 	currentDemoProg = demoState->prog_drawTexture_brightPass;
 	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-tex-bright");
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passTexcoord_transform_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawTexture_brightPass_fs->shader);
-	*/
-	// ****TO-DO: 
-	//	-> 3.1a: setup Gaussian blur program
-	/*
 	// texturing with Gaussian blurring
 	currentDemoProg = demoState->prog_drawTexture_blurGaussian;
 	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-tex-blur");
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passTexcoord_transform_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawTexture_blurGaussian_fs->shader);
-	*/
-	// ****TO-DO: 
-	//	-> 4.1a: setup screen blending program
-	/*
 	// texturing with bloom composition
 	currentDemoProg = demoState->prog_drawTexture_blendScreen4;
 	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-tex-blend4");
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passTexcoord_transform_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawTexture_blendScreen4_fs->shader);
+
+	// 06-deferred programs: 
+	// ****TO-DO: 
+	//	-> 2.1a: uncomment g-buffer program
+	/*
+	// draw lighting data as g-buffers
+	currentDemoProg = demoState->prog_drawLightingData;
+	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-lightingdata");
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passLightingData_transform_bias_vs->shader);
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawLightingData_fs->shader);
+	*/
+	// ****TO-DO: 
+	//	-> 3.1a: uncomment deferred shading composite program
+	/*
+	// draw Phong shading deferred
+	currentDemoProg = demoState->prog_drawPhong_multi_deferred;
+	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-Phong-multi-def");
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passAtlasTexcoord_transform_vs->shader);
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawPhong_multi_deferred_fs->shader);
+	*/
+	// ****TO-DO: 
+	//	-> 4.1a: uncomment deferred light volume program
+	/*
+	// draw Phong light volume
+	currentDemoProg = demoState->prog_drawPhongVolume_instanced;
+	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-Phong-volume-inst");
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passBiasedClipCoord_transform_instanced_vs->shader);
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawPhongVolume_fs->shader);
+	*/
+	// ****TO-DO: 
+	//	-> 5.1a: uncomment deferred lighting composite program
+	/*
+	// draw composited Phong shading model
+	currentDemoProg = demoState->prog_drawPhongComposite;
+	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-Phong-composite");
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passAtlasTexcoord_transform_vs->shader);
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawPhongComposite_fs->shader);
 	*/
 
 
@@ -689,6 +735,8 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 		a3demo_setUniformDefaultMat4(currentDemoProg, uMV);
 		a3demo_setUniformDefaultMat4(currentDemoProg, uP);
 		a3demo_setUniformDefaultMat4(currentDemoProg, uP_inv);
+		a3demo_setUniformDefaultMat4(currentDemoProg, uPB);
+		a3demo_setUniformDefaultMat4(currentDemoProg, uPB_inv);
 		a3demo_setUniformDefaultMat4(currentDemoProg, uMV_nrm);
 		a3demo_setUniformDefaultMat4(currentDemoProg, uMVPB);
 		a3demo_setUniformDefaultMat4(currentDemoProg, uMVPB_other);
@@ -727,10 +775,24 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 
 		// transformation uniform blocks
 		a3demo_setUniformDefaultBlock(currentDemoProg, ubTransformMVP, 0);
+		a3demo_setUniformDefaultBlock(currentDemoProg, ubTransformMVPB, 1);
 
 		// lighting uniform blocks
 		a3demo_setUniformDefaultBlock(currentDemoProg, ubPointLight, 4);
 	}
+
+
+	// ****TO-DO: 
+	//	-> 4.1a: uncomment uniform buffer setup
+	/*
+	// set up lighting uniform buffers
+	for (i = 0; i < demoStateMaxCount_lightVolumeBlock; ++i)
+	{
+		a3bufferCreate(demoState->ubo_transformMVP_light + i, "ubo:transform-mvp", a3buffer_uniform, a3index_countMaxShort, 0);
+		a3bufferCreate(demoState->ubo_transformMVPB_light + i, "ubo:transform-mvpb", a3buffer_uniform, a3index_countMaxShort, 0);
+		a3bufferCreate(demoState->ubo_pointLight + i, "ubo:pointlight", a3buffer_uniform, a3index_countMaxShort, 0);
+	}
+	*/
 
 
 	printf("\n\n---------------- LOAD SHADERS FINISHED ---------------- \n");
@@ -744,6 +806,9 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 // utility to load textures
 void a3demo_loadTextures(a3_DemoState* demoState)
 {
+	// utilities
+	const a3ui16 atlasSceneWidth = 2048, atlasSceneHeight = 2048, atlasSceneBorderPad = 8, atlasSceneAdditionalPad = 8;
+	
 	// indexing
 	a3_Texture* tex;
 	a3ui32 i;
@@ -760,6 +825,8 @@ void a3demo_loadTextures(a3_DemoState* demoState)
 		struct {
 			a3_DemoStateTexture texSkyClouds[1];
 			a3_DemoStateTexture texSkyWater[1];
+			a3_DemoStateTexture texAtlasDM[1];
+			a3_DemoStateTexture texAtlasSM[1];
 			a3_DemoStateTexture texEarthDM[1];
 			a3_DemoStateTexture texEarthSM[1];
 			a3_DemoStateTexture texMarsDM[1];
@@ -773,6 +840,8 @@ void a3demo_loadTextures(a3_DemoState* demoState)
 		{
 			{ demoState->tex_skybox_clouds,	"tex:sky-clouds",	"../../../../resource/tex/bg/sky_clouds.png" },
 			{ demoState->tex_skybox_water,	"tex:sky-water",	"../../../../resource/tex/bg/sky_water.png" },
+			{ demoState->tex_atlas_dm,		"tex:atlas-dm",		"../../../../resource/tex/atlas/atlas_scene_dm.png" },
+			{ demoState->tex_atlas_sm,		"tex:atlas-sm",		"../../../../resource/tex/atlas/atlas_scene_sm.png" },
 			{ demoState->tex_earth_dm,		"tex:earth-dm",		"../../../../resource/tex/earth/2k/earth_dm_2k.png" },
 			{ demoState->tex_earth_sm,		"tex:earth-sm",		"../../../../resource/tex/earth/2k/earth_sm_2k.png" },
 			{ demoState->tex_mars_dm,		"tex:mars-dm",		"../../../../resource/tex/mars/1k/mars_1k_dm.png" },
@@ -803,6 +872,12 @@ void a3demo_loadTextures(a3_DemoState* demoState)
 		a3textureActivate(tex, a3tex_unit00);
 		a3textureChangeFilterMode(a3tex_filterLinear);	// linear pixel blending
 	}
+	// atlases
+	for (i = 0; i < 2; ++i, ++tex)
+	{
+		a3textureActivate(tex, a3tex_unit00);
+		a3textureChangeFilterMode(a3tex_filterLinear);
+	}
 	// stone and planets
 	for (i = 0; i < 5; ++i, ++tex)
 	{
@@ -815,6 +890,17 @@ void a3demo_loadTextures(a3_DemoState* demoState)
 		a3textureActivate(tex, a3tex_unit00);
 		a3textureChangeRepeatMode(a3tex_repeatClamp, a3tex_repeatClamp);	// clamp both axes
 	}
+
+
+	// set up texture atlas transforms
+	a3demo_setAtlasTransform_internal(demoState->atlas_stone->m, atlasSceneWidth, atlasSceneHeight,
+		1600, 0, 256, 256, atlasSceneBorderPad, atlasSceneAdditionalPad);
+	a3demo_setAtlasTransform_internal(demoState->atlas_earth->m, atlasSceneWidth, atlasSceneHeight,
+		0, 0, 1024, 512, atlasSceneBorderPad, atlasSceneAdditionalPad);
+	a3demo_setAtlasTransform_internal(demoState->atlas_mars->m, atlasSceneWidth, atlasSceneHeight,
+		0, 544, 1024, 512, atlasSceneBorderPad, atlasSceneAdditionalPad);
+	a3demo_setAtlasTransform_internal(demoState->atlas_checker->m, atlasSceneWidth, atlasSceneHeight,
+		1888, 0, 128, 128, atlasSceneBorderPad, atlasSceneAdditionalPad);
 
 
 	// done
@@ -844,7 +930,7 @@ void a3demo_loadFramebuffers(a3_DemoState* demoState)
 	const a3ui16 shadowMapSz = 2048;
 
 	const a3_FramebufferColorType colorType_composite = a3fbo_colorRGBA8;//a3fbo_colorRGBA16;
-	const a3ui32 targets_composite = 1;
+	const a3ui32 targets_composite = 8;
 
 	const a3_FramebufferColorType colorType_post = colorType_composite;
 	const a3ui32 targets_post = 2;
@@ -870,28 +956,20 @@ void a3demo_loadFramebuffers(a3_DemoState* demoState)
 		a3framebufferCreate(fbo, "fbo:composite",
 			targets_composite, colorType_composite, a3fbo_depthDisable,
 			frameWidth1, frameHeight1);
-
-		// ****TO-DO: 
-		//	-> 2.1c: set up half-size framebuffers
-		/*
+		
 		//	-> post-processing, color only
 		fbo = demoState->fbo_post_c16_2fr + i;
-		???
-		???
-		???
-		*/
-		// ****TO-DO: 
-		//	-> 4.1b: set up smaller framebuffers
-		/*
+		a3framebufferCreate(fbo, "fbo:post-half",
+			targets_post, colorType_post, a3fbo_depthDisable,
+			frameWidth2, frameHeight2);
 		fbo = demoState->fbo_post_c16_4fr + i;
-		???
-		???
-		???
+		a3framebufferCreate(fbo, "fbo:post-quarter",
+			targets_post, colorType_post, a3fbo_depthDisable,
+			frameWidth4, frameHeight4);
 		fbo = demoState->fbo_post_c16_8fr + i;
-		???
-		???
-		???
-		*/
+		a3framebufferCreate(fbo, "fbo:post-eighth",
+			targets_post, colorType_post, a3fbo_depthDisable,
+			frameWidth8, frameHeight8);
 	}
 
 
@@ -938,14 +1016,16 @@ inline void a3_refreshDrawable_internal(a3_VertexDrawable *drawable, a3_VertexAr
 //	reloaded, old function pointers are out of scope!
 // could reload everything, but that would mean rebuilding GPU data...
 //	...or just set new function pointers!
-void a3demo_refresh(a3_DemoState *demoState)
+void a3demo_refresh(a3_DemoState* demoState)
 {
-	a3_BufferObject *currentBuff = demoState->drawDataBuffer,
-		*const endBuff = currentBuff + demoStateMaxCount_drawDataBuffer;
-	a3_VertexArrayDescriptor *currentVAO = demoState->vertexArray,
-		*const endVAO = currentVAO + demoStateMaxCount_vertexArray;
-	a3_DemoStateShaderProgram *currentProg = demoState->shaderProgram,
-		*const endProg = currentProg + demoStateMaxCount_shaderProgram;
+	a3_BufferObject* currentBuff = demoState->drawDataBuffer,
+		* const endBuff = currentBuff + demoStateMaxCount_drawDataBuffer;
+	a3_VertexArrayDescriptor* currentVAO = demoState->vertexArray,
+		* const endVAO = currentVAO + demoStateMaxCount_vertexArray;
+	a3_DemoStateShaderProgram* currentProg = demoState->shaderProgram,
+		* const endProg = currentProg + demoStateMaxCount_shaderProgram;
+	a3_UniformBuffer* currentUBO = demoState->uniformBuffer,
+		* const endUBO = currentUBO + demoStateMaxCount_uniformBuffer;
 	a3_Texture* currentTex = demoState->texture,
 		* const endTex = currentTex + demoStateMaxCount_texture;
 	a3_Framebuffer* currentFBO = demoState->framebuffer,
@@ -958,6 +1038,8 @@ void a3demo_refresh(a3_DemoState *demoState)
 		a3vertexArrayHandleUpdateReleaseCallback(currentVAO++);
 	while (currentProg < endProg)
 		a3shaderProgramHandleUpdateReleaseCallback((currentProg++)->program);
+	while (currentUBO < endUBO)
+		a3bufferHandleUpdateReleaseCallback(currentUBO++);
 	while (currentTex < endTex)
 		a3textureHandleUpdateReleaseCallback(currentTex++);
 	while (currentFBO < endFBO)

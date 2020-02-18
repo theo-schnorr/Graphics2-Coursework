@@ -88,6 +88,12 @@
     <Filter Include="Resource Files\A3_DEMO\glsl\4x\fs\05-bloom">
       <UniqueIdentifier>{88ed4d72-5ae5-4ca4-85e9-35032beb7e0f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\A3_DEMO\glsl\4x\fs\06-deferred">
+      <UniqueIdentifier>{f19e940e-68e8-4bed-ad32-94c643de3731}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\A3_DEMO\glsl\4x\vs\06-deferred">
+      <UniqueIdentifier>{d15f0b22-54ec-4cc8-a550-1d7cb625c0b0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="_src_win\main_dll.c">
@@ -136,6 +142,9 @@
       <Filter>Source Files\common\A3_DEMO\a3_Demo_Pipelines</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\a3_Demo_Pipelines\a3_Demo_Pipelines_initialize.c">
+      <Filter>Source Files\common\A3_DEMO\a3_Demo_Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\a3_Demo_Pipelines\a3_Demo_Pipelines_idle-update.c">
       <Filter>Source Files\common\A3_DEMO\a3_Demo_Pipelines</Filter>
     </ClCompile>
   </ItemGroup>
@@ -243,6 +252,27 @@
     </None>
     <None Include="..\..\..\resource\glsl\4x\fs\05-bloom\drawTexture_blendScreen4_fs4x.glsl">
       <Filter>Resource Files\A3_DEMO\glsl\4x\fs\05-bloom</Filter>
+    </None>
+    <None Include="..\..\..\resource\glsl\4x\fs\06-deferred\drawPhong_multi_deferred_fs4x.glsl">
+      <Filter>Resource Files\A3_DEMO\glsl\4x\fs\06-deferred</Filter>
+    </None>
+    <None Include="..\..\..\resource\glsl\4x\fs\06-deferred\drawPhongVolume_fs4x.glsl">
+      <Filter>Resource Files\A3_DEMO\glsl\4x\fs\06-deferred</Filter>
+    </None>
+    <None Include="..\..\..\resource\glsl\4x\fs\06-deferred\drawLightingData_fs4x.glsl">
+      <Filter>Resource Files\A3_DEMO\glsl\4x\fs\06-deferred</Filter>
+    </None>
+    <None Include="..\..\..\resource\glsl\4x\vs\06-deferred\passBiasedClipCoord_transform_instanced_vs4x.glsl">
+      <Filter>Resource Files\A3_DEMO\glsl\4x\vs\06-deferred</Filter>
+    </None>
+    <None Include="..\..\..\resource\glsl\4x\vs\06-deferred\passLightingData_transform_bias_vs4x.glsl">
+      <Filter>Resource Files\A3_DEMO\glsl\4x\vs\06-deferred</Filter>
+    </None>
+    <None Include="..\..\..\resource\glsl\4x\vs\06-deferred\passAtlasTexcoord_transform_vs4x.glsl">
+      <Filter>Resource Files\A3_DEMO\glsl\4x\vs\06-deferred</Filter>
+    </None>
+    <None Include="..\..\..\resource\glsl\4x\fs\06-deferred\drawPhongComposite_fs4x.glsl">
+      <Filter>Resource Files\A3_DEMO\glsl\4x\fs\06-deferred</Filter>
     </None>
   </ItemGroup>
 </Project>

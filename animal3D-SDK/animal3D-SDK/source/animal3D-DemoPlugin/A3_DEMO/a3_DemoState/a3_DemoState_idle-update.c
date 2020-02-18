@@ -210,6 +210,8 @@ void a3demo_update_scene(a3_DemoState *demoState, a3f64 dt)
 //-----------------------------------------------------------------------------
 // UPDATE
 
+void a3pipelines_update(a3_DemoState* demoState, a3_Demo_Pipelines* demoMode, a3f64 dt);
+
 void a3demo_update(a3_DemoState *demoState, a3f64 dt)
 {
 	// update scene
@@ -221,6 +223,7 @@ void a3demo_update(a3_DemoState *demoState, a3f64 dt)
 	case demoState_shading:
 		break;
 	case demoState_pipelines:
+		a3pipelines_update(demoState, demoState->demoMode_pipelines, dt);
 		break;
 	}
 }

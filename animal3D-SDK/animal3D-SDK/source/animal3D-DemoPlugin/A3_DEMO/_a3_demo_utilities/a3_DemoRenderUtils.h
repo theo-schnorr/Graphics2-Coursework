@@ -68,6 +68,9 @@ inline a3real4x4r a3demo_quickTransposedZeroBottomRow(a3real4x4p m_out, const a3
 // set default blending mode for composition
 inline void a3demo_enableCompositeBlending();
 
+// set default blending mode for accumulation
+inline void a3demo_enableAdditiveBlending();
+
 // set default state for writing to stencil buffer
 inline void a3demo_enableStencilWrite();
 

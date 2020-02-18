@@ -120,6 +120,8 @@ void a3demo_render_controls_gen(a3_DemoState const* demoState,
 		"SKIP INTERMEDIATE PASSES (toggle 'I') %s", boolText[demoState->skipIntermediatePasses]);
 	a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
 		"    Forward point light count ('l' decr | incr 'L'): %u / %u", demoState->forwardLightCount, demoStateMaxCount_lightObject);
+	a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
+		"    Deferred point light count (';' decr | incr ':'): %u / %u", demoState->deferredLightCount, demoStateMaxCount_lightVolume);
 
 	// global controls
 	textOffset = -0.8f;

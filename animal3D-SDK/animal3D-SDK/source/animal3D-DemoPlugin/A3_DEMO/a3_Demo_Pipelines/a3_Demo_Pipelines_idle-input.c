@@ -19,10 +19,10 @@
 	By Daniel S. Buckstein
 
 	a3_Demo_Pipelines_idle-input.c
-	Demo mode implementations: shading input.
+	Demo mode implementations: pipelines input.
 
 	********************************************
-	*** INPUT PROCESSING FOR SHADING MODE    ***
+	*** INPUT PROCESSING FOR PIPELINES MODE  ***
 	********************************************
 */
 
@@ -63,10 +63,11 @@ void a3pipelinesCB_input_keyCharPress(a3_DemoState const* demoState, a3_Demo_Pip
 	//	a3demoCtrlCasesLoop(demoMode->pass, pipelines_pass_max, ')', '(');
 	case ')':
 		a3demoCtrlIncLoop(demoMode->pass, pipelines_pass_max);
-	case 'I':
+	case 'I':	// if toggle is switched, do the following
 		if (demoState->skipIntermediatePasses)
 		{
 			a3demoCtrlIncClamp(demoMode->pass, pipelines_passBlend, pipelines_passComposite);
+			a3demoCtrlIncClamp(demoMode->pass, pipelines_passComposite, pipelines_passScene);
 			a3demoCtrlIncClamp(demoMode->pass, pipelines_passScene, -1);
 		}
 		break;
@@ -75,9 +76,26 @@ void a3pipelinesCB_input_keyCharPress(a3_DemoState const* demoState, a3_Demo_Pip
 		if (demoState->skipIntermediatePasses)
 		{
 			a3demoCtrlDecClamp(demoMode->pass, pipelines_passBlend, pipelines_passComposite);
+			a3demoCtrlDecClamp(demoMode->pass, pipelines_passComposite, pipelines_passScene);
 			a3demoCtrlDecClamp(demoMode->pass, pipelines_passScene, -1);
 			demoMode->pass = (demoMode->pass + pipelines_pass_max) % pipelines_pass_max;
 		}
+		break;
+	}
+
+
+	// skip passes if not on the correct pipeline
+	switch (asciiKey)
+	{
+	case ']':
+	case '[':
+	case ')':
+		if (demoMode->pass == pipelines_passLighting && demoMode->pipeline != pipelines_deferred_lighting)
+			demoMode->pass = pipelines_passComposite;
+		break;
+	case '(':
+		if (demoMode->pass == pipelines_passLighting && demoMode->pipeline != pipelines_deferred_lighting)
+			demoMode->pass = pipelines_passScene;
 		break;
 	}
 }

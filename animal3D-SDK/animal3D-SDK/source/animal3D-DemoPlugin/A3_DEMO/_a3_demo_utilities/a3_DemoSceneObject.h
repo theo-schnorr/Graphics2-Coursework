@@ -36,14 +36,41 @@
 extern "C"
 {
 #else	// !__cplusplus
-	typedef struct a3_DemoSceneObject	a3_DemoSceneObject;
-	typedef struct a3_DemoProjector		a3_DemoProjector;
-	typedef struct a3_DemoPointLight	a3_DemoPointLight;
+	typedef struct a3_DemoModelMatrixStack	a3_DemoModelMatrixStack;
+	typedef struct a3_DemoViewerMatrixStack	a3_DemoViewerMatrixStack;
+	typedef struct a3_DemoSceneObject		a3_DemoSceneObject;
+	typedef struct a3_DemoProjector			a3_DemoProjector;
+	typedef struct a3_DemoPointLight		a3_DemoPointLight;
 #endif	// __cplusplus
 
 	
 //-----------------------------------------------------------------------------
 
+	// matrix stack for a single object
+	struct a3_DemoModelMatrixStack
+	{
+		a3mat4 modelMat;						// model matrix (object -> world)
+		a3mat4 modelViewMat;					// model-view matrix (object -> viewer)
+		a3mat4 modelViewProjectionMat;			// model-view-projection matrix (object -> clip)
+		a3mat4 modelViewProjectionBiasMat;		// model-view-projection-bias matrix (object -> biased clip)
+		a3mat4 modelMatInverse;					// model inverse matrix (world -> object)
+		a3mat4 modelMatInverseTranspose;		// model inverse-transpose matrix (object -> world skewed)
+		a3mat4 modelViewMatInverseTranspose;	// model-view inverse transpose matrix (object -> viewer skewed)
+		a3mat4 atlasMat;						// atlas matrix (texture -> cell)
+	};
+
+	// matrix stack for a viewer object
+	struct a3_DemoViewerMatrixStack
+	{
+		a3mat4 projectionMat;					// projection matrix (viewer -> clip)
+		a3mat4 projectionBiasMat;				// projection-bias matrix (viewer -> biased clip)
+		a3mat4 viewProjectionMat;				// view-projection matrix (world -> clip)
+		a3mat4 viewProjectionBiasMat;			// view projection-bias matrix (world -> biased clip)
+		a3mat4 projectionMatInverse;			// projection inverse matrix (clip -> viewer)
+		a3mat4 projectionBiasMatInverse;		// projection-bias inverse matrix (biased clip -> viewer)
+		a3mat4 viewProjectionMatInverse;		// view-projection inverse matrix (clip -> world)
+		a3mat4 viewProjectionBiasMatInverse;	// view-projection-bias inverse matrix (biased clip -> world)
+	};
 
 	// general scene objects
 	struct a3_DemoSceneObject

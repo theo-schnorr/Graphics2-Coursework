@@ -150,6 +150,7 @@ void a3demoCB_input_keyCharPress(a3_DemoState* demoState, a3i32 asciiKey)
 
 		// increase/decrease light count
 		a3demoCtrlCasesCap(demoState->forwardLightCount, demoStateMaxCount_lightObject, 0, 'L', 'l');
+		a3demoCtrlCasesCap(demoState->deferredLightCount, demoStateMaxCount_lightVolume, 0, ':', ';');
 
 
 		// toggle grid
@@ -192,6 +193,26 @@ void a3demoCB_input_keyCharPress(a3_DemoState* demoState, a3i32 asciiKey)
 		break;
 	case demoState_pipelines:
 		a3pipelinesCB_input_keyCharPress(demoState, demoState->demoMode_pipelines, asciiKey);
+		break;
+	}
+}
+
+// ascii key hold callback
+void a3demoCB_input_keyCharHold(a3_DemoState* demoState, a3i32 asciiKey)
+{
+	switch (asciiKey)
+	{
+		// increase/decrease light count
+		a3demoCtrlCasesCap(demoState->deferredLightCount, demoStateMaxCount_lightVolume, 0, ':', ';');
+	}
+
+
+	// callback for current mode
+	switch (demoState->demoMode)
+	{
+	case demoState_shading:
+		break;
+	case demoState_pipelines:
 		break;
 	}
 }
