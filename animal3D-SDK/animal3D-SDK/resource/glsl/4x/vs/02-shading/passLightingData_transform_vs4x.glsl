@@ -1,12 +1,9 @@
 /*
 	Copyright 2011-2020 Daniel S. Buckstein
-
 	Licensed under the Apache License, Version 2.0 (the "License");
 	you may not use this file except in compliance with the License.
 	You may obtain a copy of the License at
-
 		http://www.apache.org/licenses/LICENSE-2.0
-
 	Unless required by applicable law or agreed to in writing, software
 	distributed under the License is distributed on an "AS IS" BASIS,
 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -39,9 +36,23 @@
 //		how to handle the texture coordinate
 
 layout (location = 0) in vec4 aPosition;
+layout (location = 2) in vec4 aNormal;
+layout (location = 8) in vec4 aTexCoord;
+
+uniform mat4 uMV;
+uniform mat4 uP;
+uniform mat4 uMV_nrm;
+uniform mat4 uAtlas;
+
+out vec4 oMVNormie;
+out vec4 oVSPos; 
+out vec4 oTexCoord;
 
 void main()
 {
-	// DUMMY OUTPUT: directly assign input position to output position
-	gl_Position = aPosition;
+	oVSPos = uMV * aPosition;
+	oMVNormie = uMV_nrm * aNormal; 
+	oTexCoord = uAtlas * aTexCoord;
+	
+	gl_Position = uP * uMV * aPosition;
 }

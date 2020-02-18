@@ -54,6 +54,7 @@ vec4 blurGaussian2(in sampler2D img, in vec2 center, in vec2 dir)
 
 void main()
 {
+	rtFragColor = texture(uImage00, oTexCoord.xy)
 	// DUMMY OUTPUT: all fragments are OPAQUE MAGENTA
-	rtFragColor = vec4(1.0, 0.0, 1.0, 1.0);
+	//rtFragColor = vec4(1.0, 0.0, 1.0, 1.0);
 }

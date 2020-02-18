@@ -48,10 +48,9 @@ void main()
 	vec4 toneMap = luminance * input;
 
 	// deserialize this boy twice or w/e
-	toneMap = ;
+	toneMap = clamp(clamp(toneMap, -1,1), -1,1);
 
 	vec4 brightPass = input * toneMap;
 
-	// DUMMY OUTPUT: all fragments are OPAQUE CYAN
 	rtFragColor = brightPass;
 }

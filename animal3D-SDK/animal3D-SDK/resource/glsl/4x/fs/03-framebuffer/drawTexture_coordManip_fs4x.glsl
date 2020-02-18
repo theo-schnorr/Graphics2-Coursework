@@ -1,12 +1,9 @@
 /*
 	Copyright 2011-2020 Daniel S. Buckstein
-
 	Licensed under the Apache License, Version 2.0 (the "License");
 	you may not use this file except in compliance with the License.
 	You may obtain a copy of the License at
-
 		http://www.apache.org/licenses/LICENSE-2.0
-
 	Unless required by applicable law or agreed to in writing, software
 	distributed under the License is distributed on an "AS IS" BASIS,
 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,11 +27,18 @@
 //	3) modify texture coordinate in some creative way
 //	4) sample texture using modified texture coordinate
 //	5) assign sample to output color
+// lab2
+in vec4 oTexCoord;
+
+uniform sampler2D uTex_dm;
 
 out vec4 rtFragColor;
 
 void main()
 {
+	//vec2 modifiedTexCoord = vec2(cos(oTexCoord.x), sin(oTexCoord.y));
+	vec2 modifiedTexCoord = vec2(oTexCoord.x*mod(oTexCoord.x,7), sin(oTexCoord.y));
+
 	// DUMMY OUTPUT: all fragments are OPAQUE DARK GREY
-	rtFragColor = vec4(0.2, 0.2, 0.2, 1.0);
+	rtFragColor = texture(uTex_dm, modifiedTexCoord);
 }

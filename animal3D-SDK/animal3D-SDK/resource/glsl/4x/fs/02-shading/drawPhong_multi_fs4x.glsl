@@ -31,10 +31,55 @@
 //	4) implement Phong shading model
 //	Note: test all data and inbound values before using them!
 
+in vec4 oMVNormie;
+in vec4 oVSPos; 
+in vec4 oTexCoord;
+
+uniform sampler2D uTex_dm;
+uniform sampler2D uTex_sm;
+uniform int uLightCt;
+uniform float uLightSz;
+uniform float uLightSzInvSq;
+uniform vec4 uLightPos[4];
+uniform vec4 uLightCol[4];
+
 out vec4 rtFragColor;
+
+float diffuse(vec4 n, vec4 l, vec4 pos);
+float specular(vec4 viewer, vec4 pos, vec4 n, vec4 l, float shinyConstant);
 
 void main()
 {
 	// DUMMY OUTPUT: all fragments are OPAQUE GREEN
-	rtFragColor = vec4(0.0, 1.0, 0.0, 1.0);
+	// phong = diffuse + specular + ambient;
+	vec4 normalizedN = normalize(oMVNormie);
+	vec4 phong  = vec4(0.0,0.0,0.0, 0.0);
+
+	for(int i = 0; i  < uLightCt; i++)
+	{
+		vec4 diffuse = diffuse(normalizedN, uLightPos[i], oVSPos)*uLightCol[i]* texture(uTex_dm, oTexCoord.xy);
+		vec4 specular = specular(vec4(0.0,0.0,0.0,1.0), oVSPos, normalizedN, uLightPos[i], 128.0) *  texture(uTex_sm, oTexCoord.xy);
+		phong += diffuse + specular;
+	}
+
+	rtFragColor = phong; //we didnt add ambient oh well it would probably super small anyway
+}
+
+
+float diffuse(vec4 n, vec4 l, vec4 pos)
+{
+	vec4 normalizedL = normalize(l-pos);
+	float dotPro = max(dot(n, normalizedL), 0.0);
+	
+	return dotPro;
+}
+
+float specular(vec4 viewerPos, vec4 pos, vec4 n, vec4 l, float shinyConstant)
+{
+	vec4 normalizedViewer = normalize(viewerPos - pos);
+	vec4 normalizedLight = normalize(l-pos);
+	vec4 normalizedReflection = reflect(-normalizedLight,n);
+	float specular = pow(max(dot(normalizedReflection, normalizedViewer), 0.0), shinyConstant);
+	
+	return specular;
 }
