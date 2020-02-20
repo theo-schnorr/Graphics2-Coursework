@@ -135,6 +135,7 @@ void a3demo_initScene(a3_DemoState *demoState)
 
 	// lights
 	demoState->forwardLightCount = demoStateMaxCount_lightObject;
+	demoState->deferredLightCount = demoStateMaxCount_lightVolumePerBlock / 32;
 
 	// first light position is hard-coded (starts at camera)
 	demoState->mainLightObject->position = demoState->mainCameraObject->position;
@@ -177,6 +178,38 @@ void a3demo_initScene(a3_DemoState *demoState)
 
 		// random radius
 		pointLight->radius = a3randomRange(10.0f, 50.0f);
+		pointLight->radiusInvSq = a3recip(pointLight->radius * pointLight->radius);
+	}
+
+	// deferred lights
+	for (i = 0, pointLight = demoState->deferredPointLight + i;
+		i < demoStateMaxCount_lightVolume;
+		++i, ++pointLight)
+	{
+		// set to zero vector
+		pointLight->worldPos = a3vec4_w;
+
+		// random positions
+		pointLight->worldPos.x = a3randomRange(-6.0f, +6.0f);
+		if (demoState->verticalAxis)
+		{
+			pointLight->worldPos.z = -a3randomRange(-6.0f, +6.0f);
+			pointLight->worldPos.y = -a3randomRange(-2.0f, +4.0f);
+		}
+		else
+		{
+			pointLight->worldPos.y = a3randomRange(-6.0f, +6.0f);
+			pointLight->worldPos.z = a3randomRange(-2.0f, +4.0f);
+		}
+
+		// random colors
+		pointLight->color.r = a3randomNormalized();
+		pointLight->color.g = a3randomNormalized();
+		pointLight->color.b = a3randomNormalized();
+		pointLight->color.a = a3real_one;
+
+		// random radius: they should be small!
+		pointLight->radius = a3randomRange(0.25f, 0.50f);
 		pointLight->radiusInvSq = a3recip(pointLight->radius * pointLight->radius);
 	}
 

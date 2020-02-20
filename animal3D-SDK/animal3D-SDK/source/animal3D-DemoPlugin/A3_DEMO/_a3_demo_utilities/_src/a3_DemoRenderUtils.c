@@ -47,6 +47,14 @@ extern inline void a3demo_enableCompositeBlending()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
+// blending state for accumulation
+extern inline void a3demo_enableAdditiveBlending()
+{
+	// result = ( new*[1] ) + ( old*[1] )
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_ONE, GL_ONE);
+}
+
 // default stencil state for writing
 extern inline void a3demo_enableStencilWrite()
 {

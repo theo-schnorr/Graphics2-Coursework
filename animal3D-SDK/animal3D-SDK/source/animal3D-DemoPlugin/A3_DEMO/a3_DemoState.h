@@ -94,14 +94,21 @@ extern "C"
 		demoStateMaxCount_lightObject = 4,
 		demoStateMaxCount_projector = 2,
 
+		demoStateMaxCount_lightUniformBufferType = 4,
+		demoStateMaxCount_lightVolumeBlock = 4,
+		demoStateMaxCount_lightVolumePerBlock = a3index_countMaxShort / sizeof(a3_DemoPointLight),
+		demoStateMaxCount_lightVolume = demoStateMaxCount_lightVolumeBlock * demoStateMaxCount_lightVolumePerBlock,
+		demoStateMaxCount_lightUniformBuffer = demoStateMaxCount_lightUniformBufferType * demoStateMaxCount_lightVolumeBlock,
+
 		demoStateMaxCount_timer = 1,
 
 		demoStateMaxCount_drawDataBuffer = 1,
 		demoStateMaxCount_vertexArray = 8,
 		demoStateMaxCount_drawable = 16,
-		
+
 		demoStateMaxCount_shaderProgram = 32,
-		
+		demoStateMaxCount_uniformBuffer = demoStateMaxCount_lightUniformBuffer,
+
 		demoStateMaxCount_texture = 16,
 
 		demoStateMaxCount_framebuffer = 16,
@@ -174,7 +181,21 @@ extern "C"
 
 		// lights
 		a3ui32 forwardLightCount;
+		a3ui32 deferredLightCount, deferredLightBlockCount, deferredLightCountPerBlock[demoStateMaxCount_lightVolumeBlock];
+		
 		a3_DemoPointLight forwardPointLight[demoStateMaxCount_lightObject];
+		a3_DemoPointLight deferredPointLight[demoStateMaxCount_lightVolume];
+
+		a3mat4 deferredLightMVP[demoStateMaxCount_lightVolume], deferredLightMVPB[demoStateMaxCount_lightVolume];
+
+
+		// texture atlas transforms
+		union {
+			a3mat4 atlasTransform[4];
+			struct {
+				a3mat4 atlas_stone[1], atlas_earth[1], atlas_mars[1], atlas_checker[1];
+			};
+		};
 
 
 		//---------------------------------------------------------------------
@@ -187,9 +208,12 @@ extern "C"
 		union {
 			a3_DemoSceneObject sceneObject[demoStateMaxCount_sceneObject];
 			struct {
-				// main scene objects
+				// general scene objects
 				a3_DemoSceneObject
-					skyboxObject[1],
+					skyboxObject[1];
+
+				// interactive scene objects
+				a3_DemoSceneObject
 					planeObject[1],
 					sphereObject[1],
 					cylinderObject[1],
@@ -309,6 +333,11 @@ extern "C"
 					prog_drawTexture_brightPass[1],				// draw texture with bright-pass or tone-mapping
 					prog_drawTexture_blurGaussian[1],			// draw texture with Gaussian blurring
 					prog_drawTexture_blendScreen4[1];			// draw texture with 4-layer screen blend
+				a3_DemoStateShaderProgram
+					prog_drawLightingData[1],					// draw attributes passed from vertex shader (g-buffers)
+					prog_drawPhong_multi_deferred[1],			// draw Phong shading model, multiple lights, in deferred pass
+					prog_drawPhongVolume_instanced[1],			// draw Phong light volume (point light)
+					prog_drawPhongComposite[1];					// draw Phong shading model by compositing light volumes
 			};
 		};
 
@@ -320,6 +349,8 @@ extern "C"
 				a3_Texture
 					tex_skybox_clouds[1],
 					tex_skybox_water[1],
+					tex_atlas_dm[1],
+					tex_atlas_sm[1],
 					tex_earth_dm[1],
 					tex_earth_sm[1],
 					tex_mars_dm[1],
@@ -341,14 +372,26 @@ extern "C"
 				a3_Framebuffer
 					fbo_shadow_d32[1];							// framebuffer for capturing shadow map
 				a3_Framebuffer
-					// ****TO-DO: 
-					//	-> 2.1a: uncomment post-processing framebuffers
-					/*
 					fbo_post_c16_2fr[3],						// framebuffers for post-processing, half frame size
 					fbo_post_c16_4fr[3],						// framebuffers for post-processing, quarter frame size
 					fbo_post_c16_8fr[3],						// framebuffers for post-processing, eighth frame size
-					*/
 					fbo_composite_c16[3];						// framebuffers for composition
+			};
+		};
+
+
+		// uniform buffer objects
+		union {
+			a3_UniformBuffer uniformBuffer[demoStateMaxCount_uniformBuffer];
+			struct {
+				// transform uniform buffers
+				a3_UniformBuffer
+					ubo_transformMVPB_light[demoStateMaxCount_lightVolumeBlock],	// MVPB matrices for lights if needed
+					ubo_transformMVP_light[demoStateMaxCount_lightVolumeBlock];		// MVP matrices for lights if needed
+
+				// lighting uniform buffers
+				a3_UniformBuffer
+					ubo_pointLight[demoStateMaxCount_lightVolumeBlock];				// individual light data
 			};
 		};
 

@@ -86,6 +86,7 @@ extern "C"
 
 // callback sub-routines
 void a3demoCB_input_keyCharPress(a3_DemoState* demoState, a3i32 asciiKey);
+void a3demoCB_input_keyCharHold(a3_DemoState* demoState, a3i32 asciiKey);
 
 // idle loop
 void a3demo_input(a3_DemoState* demoState, a3f64 dt);
@@ -442,14 +443,15 @@ A3DYLIBSYMBOL void a3demoCB_keyCharHold(a3_DemoState *demoState, a3i32 asciiKey)
 	// persistent state update
 	a3keyboardSetStateASCII(demoState->keyboard, (a3byte)asciiKey);
 
-	// callback for current mode
-	switch (demoState->demoMode)
-	{
-	case demoState_shading:
-		break;
-	case demoState_pipelines:
-		break;
-	}
+	// handle special cases immediately
+//	switch (asciiKey)
+//	{
+//
+//	}
+
+
+	// demo callback
+	a3demoCB_input_keyCharHold(demoState, asciiKey);
 }
 
 // mouse button is clicked

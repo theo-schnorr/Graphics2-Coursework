@@ -70,8 +70,10 @@ extern "C"
 				uMV,						// model-view matrix (object -> view)
 				uP,							// projection matrix (view -> clip)
 				uP_inv,						// projection matrix inverse (clip -> view)
+				uPB,						// projection-bias matrix (view -> biased clip)
+				uPB_inv,					// projection-bias inverse matrix (biased clip -> view)
 				uMV_nrm,					// model-view matrix for normals (object -> view)
-				uMVPB,						// model-view-projection-bias transform (object -> bias clip)
+				uMVPB,						// model-view-projection-bias transform (object -> biased clip)
 				uMVPB_other,				// model-view-projection-bias transform to other (object -> bias clip other)
 				uAtlas;						// atlas matrix for texture coordinates
 
@@ -103,6 +105,7 @@ extern "C"
 		struct {
 			a3i32
 				// transformation uniform block handles
+				ubTransformMVPB,	// model-view-projection-bias matrix block
 				ubTransformMVP;		// model-view-projection matrix block
 
 			a3i32

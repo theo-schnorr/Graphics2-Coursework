@@ -43,10 +43,11 @@ void a3pipelines_init(a3_DemoState const* demoState, a3_Demo_Pipelines* demoMode
 	demoMode->activeCamera = pipelines_cameraSceneViewer;
 
 	demoMode->pipeline = pipelines_forward;
-	demoMode->pass = pipelines_passComposite;
+	demoMode->pass = pipelines_passScene;
 
 	demoMode->targetIndex[pipelines_passShadow] = pipelines_shadow_fragdepth;
 	demoMode->targetIndex[pipelines_passScene] = pipelines_scene_finalcolor;
+	demoMode->targetIndex[pipelines_passLighting] = pipelines_composite_finalcolor;
 	demoMode->targetIndex[pipelines_passComposite] = pipelines_composite_finalcolor;
 	demoMode->targetIndex[pipelines_passBright_2] = pipelines_bright_finalcolor;
 	demoMode->targetIndex[pipelines_passBlurH_2] = pipelines_blur_finalcolor;
@@ -61,6 +62,7 @@ void a3pipelines_init(a3_DemoState const* demoState, a3_Demo_Pipelines* demoMode
 
 	demoMode->targetCount[pipelines_passShadow] = pipelines_target_shadow_max;
 	demoMode->targetCount[pipelines_passScene] = pipelines_target_scene_max;
+	demoMode->targetCount[pipelines_passLighting] = pipelines_target_composite_max;
 	demoMode->targetCount[pipelines_passComposite] = pipelines_target_composite_max;
 	demoMode->targetCount[pipelines_passBright_2] = pipelines_target_bright_max;
 	demoMode->targetCount[pipelines_passBlurH_2] = pipelines_target_blur_max;
