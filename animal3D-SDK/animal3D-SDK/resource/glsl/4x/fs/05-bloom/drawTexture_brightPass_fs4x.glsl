@@ -48,7 +48,7 @@ void main()
 	vec4 toneMap = luminance * input;
 
 	// deserialize this boy twice or w/e
-	toneMap = clamp(clamp(toneMap, -1,1), -1,1);
+	toneMap = 2 * toneMap - 1;
 
 	vec4 brightPass = input * toneMap;
 

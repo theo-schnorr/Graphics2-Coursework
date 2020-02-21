@@ -35,8 +35,14 @@ uniform sampler2D uImage00;
 layout (location = 0) out vec4 rtFragColor;
 in vec4 oTexCoord;
 
+vec4 screen(vec4 input1, vec4 input2, vec4 input3, vec4 input4) 
+{
+	return 1-(1-input1)*(1-input2)*(1-input3)*(1-input4);
+}
+
 void main()
 {
 	vec4 image = texture2D(uImage00, oTexCoord.xy);
 	rtFragColor = image;
+	//rtFragColor = screen(image, )
 }

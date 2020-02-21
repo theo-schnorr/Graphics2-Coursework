@@ -55,11 +55,23 @@ vec4 blurGaussian2(in sampler2D img, in vec2 center, in vec2 dir)
 	return (c * 0.25);
 }
 
+vec4 blurGaussian4(in sampler2D img, in vec2 center, in vec2 dir)
+{
+	vec4 c = vec4(0.0);
+	// Add blurrrrrrr from center of pascal row
+	c += texture(img, center) * 6.0;
+	c += texture(img, center + dir) * 4.0;
+	c += texture(img, center - dir) * 4.0;
+	c += texture(img, center + dir);
+	c += texture(img, center - dir);
 
+	// Super bright though! Gotta correct weight!
+	return (c * .0625);
+}
 
 
 void main()
 {
-	rtFragColor = blurGaussian2(uImage00,uSize,uAxis) * texture(uImage00, oTexCoord.xy);
+	rtFragColor = blurGaussian4(uImage00,oTexCoord.xy,uAxis*uSize) * texture(uImage00, oTexCoord.xy);
 	//so like i know we are supposed to use pascal's triangle but i dont know what that is or how to use it so....
 }
