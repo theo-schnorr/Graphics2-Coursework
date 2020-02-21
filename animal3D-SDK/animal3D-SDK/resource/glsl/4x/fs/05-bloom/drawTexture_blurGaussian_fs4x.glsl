@@ -31,6 +31,8 @@
 //	3) sample texture using Gaussian blur function and output result
 
 uniform sampler2D uImage00;
+uniform vec2 uSize;
+uniform vec2 uAxis;
 
 layout (location = 0) out vec4 rtFragColor;
 in vec4 oTexCoord;
@@ -53,9 +55,9 @@ vec4 blurGaussian2(in sampler2D img, in vec2 center, in vec2 dir)
 	return (c * 0.25);
 }
 
+
 void main()
 {
-	rtFragColor = texture(uImage00, oTexCoord.xy);
-	// DUMMY OUTPUT: all fragments are OPAQUE MAGENTA
-	//rtFragColor = vec4(1.0, 0.0, 1.0, 1.0);
+	rtFragColor = blurGaussian2(uImage00,uSize),uAxis) * texture(uImage00, oTexCoord.xy);
+	//so like i know we are supposed to use pascal's triangle but i dont know what that is or how to use it so....
 }

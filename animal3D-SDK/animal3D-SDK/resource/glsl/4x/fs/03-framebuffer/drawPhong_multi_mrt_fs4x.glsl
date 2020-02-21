@@ -75,10 +75,10 @@ void main()
 		specularColor += specular(vec4(0.0, 0.0, 0.0, 0.0), oVSPos, normalizedN, uLightPos[i], 128.0) * uLightCol[i];
 	}
 
-	//diffuseTex = diffuseColor * texture(uTex_dm, oTexCoord.xy);
-	//specularTex = specularColor * texture(uTex_sm, oTexCoord.xy);
+	diffuseTex = diffuseColor * texture(uTex_dm, oTexCoord.xy);
+	specularTex = specularColor * texture(uTex_sm, oTexCoord.xy);
 
-	//phong  = diffuseTex + specularTex;
+	phong  = diffuseTex + specularTex;
 
 	rtFragColor = phong;
 

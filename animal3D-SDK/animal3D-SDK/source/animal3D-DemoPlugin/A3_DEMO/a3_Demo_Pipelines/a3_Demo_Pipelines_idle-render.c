@@ -548,7 +548,6 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 	//		-> 3) send blur axis as uniform (2D vector)
 	//		-> 4) draw full-screen quad (already active
 
-	
 	currentPass = pipelines_passBlurH_2;
 	currentWriteFBO = writeFBO[currentPass];
 	currentReadFBO = readFBO[currentPass][0];
