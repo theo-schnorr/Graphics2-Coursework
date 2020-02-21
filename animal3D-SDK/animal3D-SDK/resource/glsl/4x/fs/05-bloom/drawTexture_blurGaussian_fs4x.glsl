@@ -56,8 +56,10 @@ vec4 blurGaussian2(in sampler2D img, in vec2 center, in vec2 dir)
 }
 
 
+
+
 void main()
 {
-	rtFragColor = blurGaussian2(uImage00,uSize),uAxis) * texture(uImage00, oTexCoord.xy);
+	rtFragColor = blurGaussian2(uImage00,uSize,uAxis) * texture(uImage00, oTexCoord.xy);
 	//so like i know we are supposed to use pascal's triangle but i dont know what that is or how to use it so....
 }

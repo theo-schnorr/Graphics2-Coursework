@@ -492,7 +492,7 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			// 05-bloom
 			{ { { 0 },	"shdr-fs:draw-tex-bright",			a3shader_fragment,	1,{ A3_DEMO_FS"05-bloom/drawTexture_brightPass_fs4x.glsl" } } },
 			{ { { 0 },	"shdr-fs:draw-tex-blur",			a3shader_fragment,	1,{ A3_DEMO_FS"05-bloom/drawTexture_blurGaussian_fs4x.glsl" } } },
-			{ { { 0 },	"shdr-fs:draw-tex-blend4",			a3shader_fragment,	1,{ A3_DEMO_FS"05-bloom/e/drawTexture_blendScreen4_fs4x.glsl" } } },
+			{ { { 0 },	"shdr-fs:draw-tex-blend4",			a3shader_fragment,	1,{ A3_DEMO_FS"05-bloom/drawTexture_blendScreen4_fs4x.glsl" } } },
 		}
 	};
 	a3_DemoStateShader *const shaderListPtr = (a3_DemoStateShader *)(&shaderList), *shaderPtr;
@@ -638,13 +638,13 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 	
 	// ****TO-DO: 
 	//	-> 4.1a: setup screen blending program
-	/*
+	
 	// texturing with bloom composition
 	currentDemoProg = demoState->prog_drawTexture_blendScreen4;
 	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-tex-blend4");
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passTexcoord_transform_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawTexture_blendScreen4_fs->shader);
-	*/
+	
 
 
 	// activate a primitive for validation
@@ -882,16 +882,16 @@ void a3demo_loadFramebuffers(a3_DemoState* demoState)
 		
 		// ****TO-DO: 
 		//	-> 4.1b: set up smaller framebuffers
-		/*
+		
 		fbo = demoState->fbo_post_c16_4fr + i;
-		???
-		???
-		???
+		a3framebufferCreate(fbo, "fbo:post",
+			targets_post, colorType_post, a3fbo_depthDisable,
+			frameWidth4, frameHeight4);
 		fbo = demoState->fbo_post_c16_8fr + i;
-		???
-		???
-		???
-		*/
+		a3framebufferCreate(fbo, "fbo:post",
+			targets_post, colorType_post, a3fbo_depthDisable,
+			frameWidth8, frameHeight8);
+		
 	}
 
 
