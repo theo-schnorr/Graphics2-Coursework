@@ -38,7 +38,22 @@
 //			-> normal calculated by expanding range of normal sample
 //			-> surface texture coordinate is used as-is once sampled
 
-in vec4 vTexcoord;
+in vbLightingData {
+	vec4 vViewPosition;
+	vec4 vViewNormal;
+	vec4 vTexcoord;
+	vec4 vBiasedClipCoord;
+};
+
+uniform sampler2D defaultTexUnits[16];
+
+uniform sampler2D uTex_dm;
+uniform sampler2D uTex_sm;
+uniform int uLightCt;
+uniform float uLightSz;
+uniform float uLightSzInvSq;
+uniform vec4 uLightPos[4];
+uniform vec4 uLightCol[4];
 
 layout (location = 0) out vec4 rtFragColor;
 layout (location = 4) out vec4 rtDiffuseMapSample;
@@ -46,12 +61,52 @@ layout (location = 5) out vec4 rtSpecularMapSample;
 layout (location = 6) out vec4 rtDiffuseLightTotal;
 layout (location = 7) out vec4 rtSpecularLightTotal;
 
+float diffuse(vec4 n, vec4 l, vec4 pos);
+float specular(vec4 viewer, vec4 pos, vec4 n, vec4 l, float shinyConstant);
+
 void main()
 {
+	// phong = diffuse + specular + ambient;
+	vec4 normalizedN = normalize(vViewNormal);
+	vec4 phong  = vec4(0.0,0.0,0.0, 0.0);
+	vec4 diffuseColor = vec4(0.0, 0.0, 0.0, 1.0);
+	vec4 specularColor = vec4(0.0, 0.0, 0.0, 1.0);
+	vec4 diffuseTex;
+	vec4 specularTex;
+
+	for(int i = 0; i  < uLightCt; i++)
+	{
+		// Diffuse color and diffuse texture
+		diffuseColor += diffuse(normalizedN, uLightPos[i], vViewPosition) * uLightCol[i];
+		// Specular color and specular texture
+		specularColor += specular(vec4(0.0, 0.0, 0.0, 1.0), vViewPosition, normalizedN, uLightPos[i], 128.0) * uLightCol[i];
+	}
+
+	diffuseTex = diffuseColor * texture(uTex_dm, vTexcoord.xy);
+	specularTex = specularColor * texture(uTex_sm, vTexcoord.xy);
+
 	// DUMMY OUTPUT: all fragments are OPAQUE CYAN (and others)
-	rtFragColor = vec4(0.0, 1.0, 1.0, 1.0);
-	rtDiffuseMapSample = vec4(0.0, 0.0, 1.0, 1.0);
-	rtSpecularMapSample = vec4(0.0, 1.0, 0.0, 1.0);
-	rtDiffuseLightTotal = vec4(1.0, 0.0, 1.0, 1.0);
-	rtSpecularLightTotal = vec4(1.0, 1.0, 0.0, 1.0);
+	rtFragColor = phong;
+	rtDiffuseMapSample = texture(uTex_dm, vTexcoord.xy);
+	rtSpecularMapSample = texture(uTex_sm, vTexcoord.xy);
+	rtDiffuseLightTotal = diffuseColor;
+	rtSpecularLightTotal = specularColor;
+}
+
+float diffuse(vec4 n, vec4 l, vec4 pos)
+{
+	vec4 normalizedL = normalize(l-pos);
+	float dotPro = max(dot(n, normalizedL), 0.0);
+	
+	return dotPro;
+}
+
+float specular(vec4 viewerPos, vec4 pos, vec4 n, vec4 l, float shinyConstant)
+{
+	vec4 normalizedViewer = normalize(viewerPos - pos);
+	vec4 normalizedLight = normalize(l-pos);
+	vec4 normalizedReflection = reflect(-normalizedLight,n);
+	float specular = pow(max(dot(normalizedReflection, normalizedViewer), 0.0), shinyConstant);
+	
+	return specular;
 }
