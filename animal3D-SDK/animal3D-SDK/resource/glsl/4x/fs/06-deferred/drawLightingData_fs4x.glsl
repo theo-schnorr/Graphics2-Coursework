@@ -45,6 +45,6 @@ void main()
 {
 	// DUMMY OUTPUT: all fragments are OPAQUE RED, GREEN AND BLUE
 	rtViewPosition = vViewPosition;
-	rtViewNormal = vViewNormal;
+	rtViewNormal = normalize(vViewNormal);
 	rtAtlasTexcoord = vTexcoord;
 }
