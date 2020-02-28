@@ -38,14 +38,7 @@
 //			-> normal calculated by expanding range of normal sample
 //			-> surface texture coordinate is used as-is once sampled
 
-in vbLightingData {
-	vec4 vViewPosition;
-	vec4 vViewNormal;
-	vec4 vTexcoord;
-	vec4 vBiasedClipCoord;
-};
-
-uniform sampler2D defaultTexUnits[16];
+in vec4 vTexcoord;
 
 uniform sampler2D uTex_dm;
 uniform sampler2D uTex_sm;
@@ -65,19 +58,8 @@ float diffuse(vec4 n, vec4 l, vec4 pos);
 float specular(vec4 viewer, vec4 pos, vec4 n, vec4 l, float shinyConstant);
 
 
-//lab6
-vec4 unpackTextures(sampler2D ogPos, vec2 coord) 
-{
-	return texelFetch(ogPos, ivec2(coord), 0);  //attempting to unpack
-	//we don't understand how to unpack it without unpacking the tex coord first, but to do that we need to unpack it using the texcoord
-	//this is based on the superbible code
-}
-
-
 void main()
 {
-
-
 	// phong = diffuse + specular + ambient;
 	vec4 normalizedN = normalize(vViewNormal);
 	vec4 phong  = vec4(0.0,0.0,0.0, 0.0);
