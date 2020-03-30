@@ -475,6 +475,12 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			// 07-curves
 			a3_DemoStateShader
 				drawPhong_multi_forward_mrt_fs[1];
+
+			//Midterm
+			a3_DemoStateShader
+				tess_ctrl_ts[1],
+				tess_eval_ts[1],
+				spikey_vertex_vs[1];
 		};
 	} shaderList = {
 		{
@@ -536,6 +542,10 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			{ { { 0 },	"shdr-fs:draw-Phong-composite",		a3shader_fragment,	1,{ A3_DEMO_FS"06-deferred/e/drawPhongComposite_fs4x.glsl" } } },
 			// 07-curves
 			{ { { 0 },	"shdr-fs:draw-Phong-mul-fwd-mrt",	a3shader_fragment,	1,{ A3_DEMO_FS"07-curves/drawPhong_multi_forward_mrt_fs4x.glsl" } } },
+			//Midterm
+			{ {	{ 0 },  "shdr-ts:tess-ctrl",   a3shader_tessellationControl,  1, { A3_DEMO_TS"SpikeyControl_tcs4x.glsl" } } },
+			{ {	{ 0 },  "shdr-ts:tess-eval",   a3shader_tessellationControl,  1, { A3_DEMO_TS"SpikeyEval_tcs4x.glsl" } } },
+			{ {	{ 0 },  "shdr-vs:spikey-vertex",   a3shader_vertex,  1, { A3_DEMO_VS"07-curves/SpikeyVertex_vs4x.glsl" } } },
 		}
 	};
 	a3_DemoStateShader *const shaderListPtr = (a3_DemoStateShader *)(&shaderList), *shaderPtr;
@@ -718,6 +728,13 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawCurveSegment_gs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawColorAttrib_fs->shader);
 
+	// Midterm programs: 
+	// make the objects physically textured
+	currentDemoProg = demoState->prog_spikey;
+	a3shaderProgramCreate(currentDemoProg->program, "prog:spikey");
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.tess_ctrl_ts->shader);
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.tess_eval_ts->shader);
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.spikey_vertex_vs->shader);
 
 	// activate a primitive for validation
 	// makes sure the specified geometry can draw using programs
@@ -873,6 +890,7 @@ void a3demo_loadTextures(a3_DemoState* demoState)
 			a3_DemoStateTexture texRampDM[1];
 			a3_DemoStateTexture texRampSM[1];
 			a3_DemoStateTexture texChecker[1];
+			a3_DemoStateTexture texDisplacement[1];
 		};
 	} textureList = {
 		{
@@ -888,6 +906,7 @@ void a3demo_loadTextures(a3_DemoState* demoState)
 			{ demoState->tex_ramp_dm,		"tex:ramp-dm",		"../../../../resource/tex/sprite/celRamp_dm.png" },
 			{ demoState->tex_ramp_sm,		"tex:ramp-sm",		"../../../../resource/tex/sprite/celRamp_sm.png" },
 			{ demoState->tex_checker,		"tex:checker",		"../../../../resource/tex/sprite/checker.png" },
+			{ demoState->tex_displacement, "tex:displacement", ".../putInHere.jpg"}, //NOT DONE
 		}
 	};
 	const a3ui32 numTextures = sizeof(textureList) / sizeof(a3_DemoStateTexture);
