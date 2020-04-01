@@ -2,10 +2,10 @@
 
 layout (quads, fractional_pdd_spacing) in;
 
-uniform sampler2D /* TEXTURE NAME */;
+uniform sampler2D tex_displacement;
 
 uniform mat4 uMVP;
-uniform float /* DEPTH MAP DEPTH */;
+uniform float 1.0; //this is a guess lol
 
 in TCS_OUT
 {
