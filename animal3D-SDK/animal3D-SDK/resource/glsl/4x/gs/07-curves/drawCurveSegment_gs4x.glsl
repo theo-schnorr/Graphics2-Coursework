@@ -43,6 +43,12 @@
 //	6) write interpolation functions to help with sampling
 //	7) select curve type and sample over [0, 1] interval
 
+//1
+layout (triangles) in;
+
+//4
+layout (triangle_strip) out;
+
 void main()
 {
 	

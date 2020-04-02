@@ -5,7 +5,8 @@ layout (quads, fractional_pdd_spacing) in;
 uniform sampler2D tex_displacement;
 
 uniform mat4 uMVP;
-uniform float 1.0; //this is a guess lol
+
+//uniform float 1.0; //this is a guess lol
 
 in TCS_OUT
 {
@@ -27,7 +28,7 @@ void main(void)
 	vec4 p1 = mix(gl_in[2].gl_Position, gl_in[3].gl_Position, gl_TessCoord.x);
 	vec4 p = mix(p2, p1, gl_TessCoord.y);
 
-	p.y += texture(/* TEXTURE NAME */, tc).r * /* DEPTH MAP DEPTH */;
+	p.y += texture(tex_displacement, tc).r * 1.0;
 
 	gl_Position = uMVP * p;
 	tes_out.tc = tc;

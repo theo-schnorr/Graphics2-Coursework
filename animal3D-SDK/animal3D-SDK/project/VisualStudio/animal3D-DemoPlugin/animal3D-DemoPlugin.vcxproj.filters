@@ -313,13 +313,13 @@
     <None Include="..\..\..\resource\glsl\4x\gs\07-curves\drawCurveSegment_gs4x.glsl">
       <Filter>Resource Files\A3_DEMO\glsl\4x\gs\07-curves</Filter>
     </None>
-    <None Include="SpikeyVertex_vs4x.glsl">
+    <None Include="..\..\..\resource\glsl\4x\vs\SpikeyVertex_vs4x.glsl">
       <Filter>Resource Files\A3_DEMO\glsl\4x\vs</Filter>
     </None>
-    <None Include="SpikeyControl_tcs4x.glsl">
+    <None Include="..\..\..\resource\glsl\4x\ts\SpikeyEval_tes4x.glsl">
       <Filter>Resource Files\A3_DEMO\glsl\4x\ts</Filter>
     </None>
-    <None Include="SpikeyEval_tes4x.glsl">
+    <None Include="..\..\..\resource\glsl\4x\ts\SpikeyControl_tcs4x.glsl">
       <Filter>Resource Files\A3_DEMO\glsl\4x\ts</Filter>
     </None>
   </ItemGroup>

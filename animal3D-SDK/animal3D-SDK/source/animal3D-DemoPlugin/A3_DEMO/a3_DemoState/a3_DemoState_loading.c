@@ -545,7 +545,7 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			//Midterm
 			{ {	{ 0 },  "shdr-ts:tess-ctrl",   a3shader_tessellationControl,  1, { A3_DEMO_TS"SpikeyControl_tcs4x.glsl" } } },
 			{ {	{ 0 },  "shdr-ts:tess-eval",   a3shader_tessellationControl,  1, { A3_DEMO_TS"SpikeyEval_tcs4x.glsl" } } },
-			{ {	{ 0 },  "shdr-vs:spikey-vertex",   a3shader_vertex,  1, { A3_DEMO_VS"07-curves/SpikeyVertex_vs4x.glsl" } } },
+			{ {	{ 0 },  "shdr-vs:spikey-vertex",   a3shader_vertex,  1, { A3_DEMO_VS"SpikeyVertex_vs4x.glsl" } } },
 		}
 	};
 	a3_DemoStateShader *const shaderListPtr = (a3_DemoStateShader *)(&shaderList), *shaderPtr;
