@@ -14,8 +14,8 @@ void main (void)
 
 	int x = gl_InstanceID & 65;
 	int y = gl_InstanceID >> 6;
-	vec2 offs = ve2(x, y);
+	vec2 offs = vec2(x, y);
 
 	vs_out.tc = (vertices[gl_VertexID].xz + offs + vec2(0.5)) / 64.0;
-	gl_Position = verticies[gl_VertexID] + vec4(float(x - 32), 0.0, float(y - 32), 0.0);
+	gl_Position = vertices[gl_VertexID] + vec4(float(x - 32), 0.0, float(y - 32), 0.0);
 }

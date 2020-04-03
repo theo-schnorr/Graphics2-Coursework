@@ -431,6 +431,8 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			// 07-curves
 			a3_DemoStateShader
 				passTangentBasis_transform_instanced_vs[1];
+			a3_DemoStateShader
+				spikey_vertex_vs[1];
 
 			// geometry shaders
 			// 07-curves
@@ -479,8 +481,7 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			//Midterm
 			a3_DemoStateShader
 				tess_ctrl_ts[1],
-				tess_eval_ts[1],
-				spikey_vertex_vs[1];
+				tess_eval_ts[1];
 		};
 	} shaderList = {
 		{
@@ -506,7 +507,8 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			{ { { 0 },	"shdr-vs:pass-biasedclip-inst",		a3shader_vertex  ,	1,{ A3_DEMO_VS"06-deferred/e/passBiasedClipCoord_transform_instanced_vs4x.glsl" } } },
 			// 07-curves
 			{ { { 0 },	"shdr-vs:pass-tangent-trans-inst",	a3shader_vertex  ,	1,{ A3_DEMO_VS"07-curves/passTangentBasis_transform_instanced_vs4x.glsl" } } },
-
+			//Midterm
+			{ {	{ 0 },  "shdr-vs:spikey-vertex",   a3shader_vertex,  1, { A3_DEMO_VS"SpikeyVertex_vs4x.glsl" } } },
 			// gs
 			// 07-curves
 			{ { { 0 },	"shdr-gs:draw-curve-segment",		a3shader_geometry,	1,{ A3_DEMO_GS"07-curves/drawCurveSegment_gs4x.glsl" } } },
@@ -545,7 +547,7 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			//Midterm
 			{ {	{ 0 },  "shdr-ts:tess-ctrl",   a3shader_tessellationControl,  1, { A3_DEMO_TS"SpikeyControl_tcs4x.glsl" } } },
 			{ {	{ 0 },  "shdr-ts:tess-eval",   a3shader_tessellationControl,  1, { A3_DEMO_TS"SpikeyEval_tcs4x.glsl" } } },
-			{ {	{ 0 },  "shdr-vs:spikey-vertex",   a3shader_vertex,  1, { A3_DEMO_VS"SpikeyVertex_vs4x.glsl" } } },
+			
 		}
 	};
 	a3_DemoStateShader *const shaderListPtr = (a3_DemoStateShader *)(&shaderList), *shaderPtr;

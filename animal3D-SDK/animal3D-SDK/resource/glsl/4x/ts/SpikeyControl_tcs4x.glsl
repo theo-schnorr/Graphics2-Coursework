@@ -1,6 +1,6 @@
 #version 430
 
-layout (verticies = 4) out;
+layout (vertices = 4) out;
 
 in VS_OUT
 {
@@ -42,10 +42,10 @@ void main(void)
 			float l2 = length(p3.xy - p1.xy) * 16.0 + 1.0;
 			float l3 = length(p1.xy - p0.xy) * 16.0 + 1.0;
 
-			gl_TesslevelOuter[0] = l0;
-			gl_TesslevelOuter[1] = l1;
-			gl_TesslevelOuter[2] = l2;
-			gl_TesslevelOuter[3] = l3;
+			gl_TessLevelOuter[0] = l0;
+			gl_TessLevelOuter[1] = l1;
+			gl_TessLevelOuter[2] = l2;
+			gl_TessLevelOuter[3] = l3;
 			gl_TessLevelInner[0] = min(l1, l3);
 			gl_TessLevelInner[1] = min(l0, l2);
 		}
