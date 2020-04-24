@@ -234,6 +234,7 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 		demoState->tex_mars_dm,
 		demoState->tex_checker,
 		demoState->tex_displacement,
+		demoState->tex_smokey_dm,
 	};
 	const a3_Texture* texture_sm[] = {
 		demoState->tex_stone_dm,
@@ -242,6 +243,7 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 		demoState->tex_mars_sm,
 		demoState->tex_checker,
 		demoState->tex_displacement,
+		demoState->tex_smokey_sm,
 	};
 
 	// temp texture atlas matrix pointers
@@ -401,7 +403,9 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 
 
 	// select program based on settings
-	currentDemoProgram = renderProgram[pipeline][render];
+	//currentDemoProgram = renderProgram[pipeline][render];
+	//currentDemoProgram = demoState->prog_drawPhong_multi_forward_mrt;
+	currentDemoProgram = demoState->prog_spikey;
 	a3shaderProgramActivate(currentDemoProgram->program);
 
 	// send shared data: 
@@ -449,8 +453,19 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 			// send data and draw
 			a3textureActivate(texture_dm[k], a3tex_unit00);
 			a3textureActivate(texture_sm[k], a3tex_unit01);
+			//a3vertexDrawableActivateAndRen();
 			a3shaderUniformSendInt(a3unif_single, currentDemoProgram->uIndex, 1, &j);
-			a3vertexDrawableActivateAndRender(drawable[k]);
+			//a3vertexDrawableActivateAndRender(drawable[k]);
+			{
+				float outer[4] = {1,1,1,1};
+				float inner[2] = { 1,1 };
+				a3_VertexDrawable temp = *drawable[k];
+				//temp.primitive = GL_PATCHES;
+				glPatchParameteri(GL_PATCH_VERTICES, 3);
+				glPatchParameterfv(GL_PATCH_DEFAULT_OUTER_LEVEL, outer);
+				glPatchParameterfv(GL_PATCH_DEFAULT_INNER_LEVEL, inner);
+				a3vertexDrawableActivateAndRender(&temp);
+			}
 		}
 	}	break;
 		// end forward scene pass

@@ -477,6 +477,10 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			// 07-curves
 			a3_DemoStateShader
 				drawPhong_multi_forward_mrt_fs[1];
+			// Final
+			a3_DemoStateShader
+				//drawRed_fs[1],
+				spookyColors_fs[1];
 
 			//Midterm
 			a3_DemoStateShader
@@ -547,6 +551,9 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			//Midterm
 			{ {	{ 0 },  "shdr-ts:tess-ctrl",   a3shader_tessellationControl,  1, { A3_DEMO_TS"SpikeyControl_tcs4x.glsl" } } },
 			{ {	{ 0 },  "shdr-ts:tess-eval",   a3shader_tessellationControl,  1, { A3_DEMO_TS"SpikeyEval_tcs4x.glsl" } } },
+			//Final
+			//{ { { 0 },	"shdr-fs:draw-red",			a3shader_fragment,	1,{ A3_DEMO_FS"drawRed_fs4x.glsl" } } },
+			{ { { 0 },	"shdr-fs:draw-spooky-colors",			a3shader_fragment,	1,{ A3_DEMO_FS"spookyColors_fs4x.glsl" } } },
 			
 		}
 	};
@@ -734,9 +741,10 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 	// make the objects physically textured
 	currentDemoProg = demoState->prog_spikey;
 	a3shaderProgramCreate(currentDemoProg->program, "prog:spikey");
-	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.tess_ctrl_ts->shader);
-	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.tess_eval_ts->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.spikey_vertex_vs->shader);
+	//a3shaderProgramAttachShader(currentDemoProg->program, shaderList.tess_ctrl_ts->shader);
+	//a3shaderProgramAttachShader(currentDemoProg->program, shaderList.tess_eval_ts->shader);
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.spookyColors_fs->shader);
 
 	// activate a primitive for validation
 	// makes sure the specified geometry can draw using programs
@@ -893,6 +901,8 @@ void a3demo_loadTextures(a3_DemoState* demoState)
 			a3_DemoStateTexture texRampSM[1];
 			a3_DemoStateTexture texChecker[1];
 			a3_DemoStateTexture texDisplacement[1];
+			a3_DemoStateTexture texSmokeySM[1];
+			a3_DemoStateTexture texSmokeyDM[1];
 		};
 	} textureList = {
 		{
@@ -909,6 +919,8 @@ void a3demo_loadTextures(a3_DemoState* demoState)
 			{ demoState->tex_ramp_sm,		"tex:ramp-sm",		"../../../../resource/tex/sprite/celRamp_sm.png" },
 			{ demoState->tex_checker,		"tex:checker",		"../../../../resource/tex/sprite/checker.png" },
 			{ demoState->tex_displacement, "tex:displacement", "../../../../resource/tex/sprite/displacement-map.jpg"},
+			{ demoState->tex_smokey_dm, "tex:smokey-dm", "../../../../resource/tex/sprite/smoke.jpg"},
+			{ demoState->tex_smokey_sm, "tex:smokey-sm", "../../../../resource/tex/sprite/smokey.jpg"},
 		}
 	};
 	const a3ui32 numTextures = sizeof(textureList) / sizeof(a3_DemoStateTexture);

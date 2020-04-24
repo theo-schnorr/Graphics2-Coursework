@@ -177,6 +177,7 @@ void a3shading_render(a3_DemoState const* demoState, a3_Demo_Shading const* demo
 		demoState->tex_mars_dm,
 		demoState->tex_checker,
 		demoState->tex_displacement,
+		demoState->tex_smokey_dm,
 	};
 	const a3_Texture* texture_sm[] = {
 		demoState->tex_stone_dm,
@@ -185,6 +186,7 @@ void a3shading_render(a3_DemoState const* demoState, a3_Demo_Shading const* demo
 		demoState->tex_mars_sm,
 		demoState->tex_checker,
 		demoState->tex_displacement,
+		demoState->tex_smokey_sm,
 	};
 
 	// forward pipeline shader programs

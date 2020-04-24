@@ -381,7 +381,9 @@ extern "C"
 					tex_ramp_dm[1],
 					tex_ramp_sm[1],
 					tex_checker[1],
-					tex_displacement[1];
+					tex_displacement[1],
+					tex_smokey_dm[1],
+					tex_smokey_sm[1];
 			};
 		};
 
