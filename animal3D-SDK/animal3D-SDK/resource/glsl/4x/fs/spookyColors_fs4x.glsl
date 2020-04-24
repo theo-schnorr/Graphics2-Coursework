@@ -23,10 +23,10 @@ float specular(vec4 viewerPos, vec4 pos, vec4 n, vec4 l, float shinyConstant)
 {
 	vec4 normalizedViewer = normalize(viewerPos - pos);
 	vec4 normalizedLight = normalize(l-pos);
-vec4 normalizedReflection = reflect(-normalizedLight, n);
-//return pow(max(dot(normalizedReflection, normalizedViewer), 0.0), shinyConstant); 
-//i want to try something different, if it doesnt work we go to the old one
-return pow(dot(normalizedReflection, normalizedViewer)/2.0+.5, shinyConstant);
+	vec4 normalizedReflection = reflect(-normalizedLight, n);
+	//return pow(max(dot(normalizedReflection, normalizedViewer), 0.0), shinyConstant); 
+	//i want to try something different, if it doesnt work we go to the old one
+	return pow(dot(normalizedReflection, normalizedViewer)/2.0+.5, shinyConstant);
 }
 
 vec4 phong(vec4 normie, vec4 viewSpacePos, sampler2D diffuseTex, sampler2D specularTex, vec4 texCoord)
@@ -49,6 +49,7 @@ vec4 colorCurveInterpolation(vec4 pink, vec4 yellow, vec4 cyan, float time)
 	vec4 p2 = mix(cyan, yellow, cos(time));
 	return mix(p1, p2, cos(time)/2.0+.5);
 }
+
 void main()
 {
 	vec4 pink = vec4(1.0, 0.8, 1.0, 1.0);

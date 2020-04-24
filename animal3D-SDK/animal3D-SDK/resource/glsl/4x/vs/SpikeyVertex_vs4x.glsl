@@ -34,5 +34,6 @@ void main (void)
     oTexCoord = uAtlas * aTexCoord;
 
 	vs_out.tc = (vertices[gl_VertexID].xz + offs + vec2(0.5)) / 64.0;
-	gl_Position = vertices[gl_VertexID] + vec4(float(x - 32), 0.0, float(y - 32), 0.0);
+	//gl_Position = vertices[gl_VertexID] + vec4(float(x - 32), 0.0, float(y - 32), 0.0);
+	gl_Position = uP * uMV * aPosition;
 }

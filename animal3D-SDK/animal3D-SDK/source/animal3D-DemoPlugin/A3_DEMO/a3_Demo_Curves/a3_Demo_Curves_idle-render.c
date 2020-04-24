@@ -451,9 +451,12 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 			++j, ++k, ++currentSceneObject)
 		{
 			// send data and draw
+			a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uP, 1, activeCamera->projectionMat.mm);
+			a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uMV, 1, a3mat4_identity.mm);
+			a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uMV_nrm, 1, a3mat4_identity.mm);
+			a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uAtlas, 1, a3mat4_identity.mm);
 			a3textureActivate(texture_dm[k], a3tex_unit00);
 			a3textureActivate(texture_sm[k], a3tex_unit01);
-			//a3vertexDrawableActivateAndRen();
 			a3shaderUniformSendInt(a3unif_single, currentDemoProgram->uIndex, 1, &j);
 			//a3vertexDrawableActivateAndRender(drawable[k]);
 			{
