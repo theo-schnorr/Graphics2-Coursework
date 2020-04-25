@@ -332,8 +332,10 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 	};
 
 	// final model matrix and full matrix stack
+	//a3mat4 viewMat = activeCameraObject->modelMatInv;
 	a3mat4 viewProjectionMat = activeCamera->viewProjectionMat;
 	a3mat4 modelViewProjectionMat = viewProjectionMat;
+	//a3mat4 modelViewMat = activeCameraObject->modelMatInv, modelMat = a3mat4_identity;
 	a3mat4 modelMat = a3mat4_identity;
 	a3mat4 modelViewProjectionBiasMat_other, viewProjectionBiasMat_other = activeShadowCaster->viewProjectionMat;
 	a3mat4 projectionBiasMat = activeCamera->projectionMat, projectionBiasMat_inv = activeCamera->projectionMatInv;
