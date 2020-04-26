@@ -461,6 +461,8 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 			a3textureActivate(texture_sm[k], a3tex_unit01);
 			a3shaderUniformSendInt(a3unif_single, currentDemoProgram->uIndex, 1, &j);
 			//a3vertexDrawableActivateAndRender(drawable[k]);
+
+			// if (check for if a tesselation program)
 			{
 				float outer[4] = {1,1,1,1};
 				float inner[2] = { 1,1 };
@@ -471,6 +473,12 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 				glPatchParameterfv(GL_PATCH_DEFAULT_INNER_LEVEL, inner);
 				a3vertexDrawableActivateAndRender(&temp);
 			}
+			/*
+			else
+			{
+				a3vertexDrawableActivateAndRender(drawable[k]);
+			}
+			*/
 		}
 	}	break;
 		// end forward scene pass
