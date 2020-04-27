@@ -89,6 +89,7 @@ extern "C"
 		a3_GraphicsObjectHandle handle[1];
 		a3i16 linked, validated;
 		a3i16 shadersAttached[6];
+		int tess;
 	};
 
 	
